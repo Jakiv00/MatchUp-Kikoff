@@ -1,7 +1,7 @@
 [build]
-  base = "."
+  base = "project"
   command = "npm install && npm run build:web"
-  publish = "web-build"
+  publish = "project/web-build"
   ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF ./"
 
 [build.environment]
