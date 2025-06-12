@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-export default function TournamentsScreen() {
+export default function FieldsScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tournaments</Text>
+      <Text style={styles.title}>Fields</Text>
       <Text style={styles.subtitle}>Coming soon</Text>
     </View>
   );

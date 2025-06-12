@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { Platform, StyleSheet } from 'react-native';
-import { Home, Trophy, Users, CalendarDays, User } from 'lucide-react-native';
+import { Home, MapPin, Users, CalendarDays, User } from 'lucide-react-native';
 
 export default function TabLayout() {
   return (
@@ -25,8 +25,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="tournaments"
         options={{
-          title: 'Tournaments',
-          tabBarIcon: ({ color, size }) => <Trophy size={size} color={color} />,
+          title: 'Fields',
+          tabBarIcon: ({ color, size }) => <MapPin size={size} color={color} />,
         }}
       />
       <Tabs.Screen
