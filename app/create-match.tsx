@@ -79,8 +79,14 @@ export default function CreateMatchScreen() {
     { id: '7', initials: 'LM', name: 'Lionel Messi', selected: false },
   ]);
   
-  // Save draft or close
+  // Save draft or close - Navigate directly to home
   const handleClose = () => {
+    // Navigate directly to home screen without showing alert
+    router.replace('/(tabs)');
+  };
+  
+  // Alternative close handler with save draft option
+  const handleCloseWithSaveOption = () => {
     Alert.alert(
       'Save Draft?',
       'Do you want to save your match as a draft?',
@@ -88,14 +94,14 @@ export default function CreateMatchScreen() {
         {
           text: 'Discard',
           style: 'destructive',
-          onPress: () => router.back(),
+          onPress: () => router.replace('/(tabs)'),
         },
         {
           text: 'Save Draft',
           onPress: () => {
             // Save draft logic would go here
             console.log('Saving draft...');
-            router.back();
+            router.replace('/(tabs)');
           },
         },
       ]
@@ -215,6 +221,7 @@ export default function CreateMatchScreen() {
           style={styles.backButton}
           onPress={goToPreviousStep}
           disabled={currentStep === 1}
+          activeOpacity={0.7}
         >
           <ArrowLeft
             size={24}
@@ -227,6 +234,7 @@ export default function CreateMatchScreen() {
         <TouchableOpacity
           style={styles.closeButton}
           onPress={handleClose}
+          activeOpacity={0.7}
         >
           <X size={24} color="#ffffff" />
         </TouchableOpacity>
@@ -262,6 +270,7 @@ export default function CreateMatchScreen() {
             style={[styles.button, styles.createButton, !canProceed() && styles.disabledButton]}
             onPress={createMatch}
             disabled={!canProceed()}
+            activeOpacity={0.7}
           >
             <Text style={styles.buttonText}>Create Match</Text>
           </TouchableOpacity>
@@ -269,7 +278,8 @@ export default function CreateMatchScreen() {
           <>
             <TouchableOpacity
               style={[styles.button, styles.saveButton]}
-              onPress={handleClose}
+              onPress={handleCloseWithSaveOption}
+              activeOpacity={0.7}
             >
               <Save size={20} color="#ffffff" />
               <Text style={styles.buttonText}>Save Draft</Text>
@@ -279,6 +289,7 @@ export default function CreateMatchScreen() {
               style={[styles.button, styles.nextButton, !canProceed() && styles.disabledButton]}
               onPress={goToNextStep}
               disabled={!canProceed()}
+              activeOpacity={0.7}
             >
               <Text style={styles.buttonText}>Next</Text>
               <ArrowRight size={20} color="#ffffff" />
@@ -306,6 +317,14 @@ const styles = StyleSheet.create({
   },
   backButton: {
     padding: 8,
+    minWidth: 40,
+    minHeight: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    // Fix for Bolt preview - ensure proper touch handling
+    ...(typeof window !== 'undefined' && {
+      cursor: 'pointer',
+    }),
   },
   headerTitle: {
     fontSize: 18,
@@ -314,6 +333,14 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     padding: 8,
+    minWidth: 40,
+    minHeight: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    // Fix for Bolt preview - ensure proper touch handling
+    ...(typeof window !== 'undefined' && {
+      cursor: 'pointer',
+    }),
   },
   progressContainer: {
     flexDirection: 'row',
@@ -353,6 +380,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
+    // Fix for Bolt preview - ensure proper touch handling
+    ...(typeof window !== 'undefined' && {
+      cursor: 'pointer',
+    }),
   },
   saveButton: {
     backgroundColor: '#4b5563',
@@ -375,5 +406,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
     marginHorizontal: 8,
+    // Fix for Bolt preview - prevent text selection
+    ...(typeof window !== 'undefined' && {
+      userSelect: 'none',
+      pointerEvents: 'none',
+    }),
   },
 });
