@@ -97,15 +97,19 @@ export default function HomeScreen() {
   const handleRatingSubmit = (teamRating: number, fieldRating: number, rateAllPlayers: boolean, teammateRatings?: Record<string, number>) => {
     console.log('Rating submitted:', { teamRating, fieldRating, rateAllPlayers, teammateRatings });
     
-    // Only show teammates rating screen if we haven't rated any teammates yet
-    if (!rateAllPlayers && teamRating > 0 && (!teammateRatings || Object.keys(teammateRatings).length === 0)) {
-      setRateTeammatesVisible(true);
-    } else {
-      // If we have teammate ratings or rateAllPlayers is true, we're done
-      setRateTeammatesVisible(false);
-    }
-    
+    // Close the rating popup first
     setRatingPopupVisible(false);
+    
+    // Only show teammates rating screen if:
+    // 1. The "Rate all players" toggle is enabled AND we don't have teammate ratings yet, OR
+    // 2. User explicitly requested to rate teammates (this would be handled by a separate button/action)
+    // 
+    // We should NOT show it just because rateAllPlayers is false and there are no ratings
+    if (rateAllPlayers && (!teammateRatings || Object.keys(teammateRatings).length === 0)) {
+      setRateTeammatesVisible(true);
+    }
+    // If rateAllPlayers is false, we simply don't show the teammates screen
+    // The user has chosen not to rate all players, so we respect that choice
   };
 
   const handleTeammateRatingsSubmit = (ratings: Record<string, number>) => {
