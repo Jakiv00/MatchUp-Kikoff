@@ -139,7 +139,11 @@ export default function HomeScreen() {
       
       <Text style={styles.sectionTitle}>Available Matches</Text>
       
-      <ScrollView style={styles.matchesContainer}>
+      <ScrollView 
+        style={styles.matchesContainer}
+        contentContainerStyle={styles.matchesContent}
+        showsVerticalScrollIndicator={false}
+      >
         {availableMatches.map((match) => (
           <View key={match.id} style={styles.matchCard}>
             <View style={styles.matchHeader}>
@@ -204,7 +208,8 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    paddingTop: 16,
+    paddingHorizontal: 16,
     backgroundColor: '#0f1115',
   },
   title: {
@@ -248,6 +253,10 @@ const styles = StyleSheet.create({
   },
   matchesContainer: {
     flex: 1,
+    marginBottom: 0,
+  },
+  matchesContent: {
+    paddingBottom: 16,
   },
   matchCard: {
     backgroundColor: '#1a1d23',
