@@ -61,6 +61,7 @@ export default function TeamSizeSelector({
             teamSize === 5 && !isCustomSize && styles.selectedButton
           ]}
           onPress={() => handleSizeSelection(5)}
+          activeOpacity={0.7}
         >
           <Text style={[
             styles.buttonText,
@@ -74,6 +75,7 @@ export default function TeamSizeSelector({
             teamSize === 7 && !isCustomSize && styles.selectedButton
           ]}
           onPress={() => handleSizeSelection(7)}
+          activeOpacity={0.7}
         >
           <Text style={[
             styles.buttonText,
@@ -87,6 +89,7 @@ export default function TeamSizeSelector({
             teamSize === 11 && !isCustomSize && styles.selectedButton
           ]}
           onPress={() => handleSizeSelection(11)}
+          activeOpacity={0.7}
         >
           <Text style={[
             styles.buttonText,
@@ -100,6 +103,7 @@ export default function TeamSizeSelector({
             isCustomSize && styles.selectedButton
           ]}
           onPress={handleCustomPress}
+          activeOpacity={0.7}
         >
           <Text style={[
             styles.buttonText,
@@ -154,6 +158,10 @@ const styles = StyleSheet.create({
     width: '48%',
     alignItems: 'center',
     marginBottom: 16,
+    // Fix for Bolt preview - ensure proper touch handling
+    ...(typeof window !== 'undefined' && {
+      cursor: 'pointer',
+    }),
   },
   selectedButton: {
     backgroundColor: '#3b82f6',
@@ -162,6 +170,11 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 18,
     fontWeight: '600',
+    // Fix for Bolt preview - prevent text selection
+    ...(typeof window !== 'undefined' && {
+      userSelect: 'none',
+      pointerEvents: 'none',
+    }),
   },
   selectedButtonText: {
     color: '#ffffff',
