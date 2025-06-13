@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, X } from 'lucide-react-native';
@@ -12,6 +12,9 @@ export default function JoinMatchScreen() {
   const [position, setPosition] = useState('');
   const [notes, setNotes] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
+  
+  const nameInputRef = useRef<TextInput>(null);
+  const notesInputRef = useRef<TextInput>(null);
   
   const positions = [
     'GK', 'DEF', 'MID', 'FWD', 'Any'
@@ -56,6 +59,15 @@ export default function JoinMatchScreen() {
     }
   };
 
+  const handleInputFocus = (inputRef: React.RefObject<TextInput>) => {
+    // Ensure input stays focused properly on web
+    if (Platform.OS === 'web') {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
@@ -86,6 +98,7 @@ export default function JoinMatchScreen() {
             <View style={styles.formGroup}>
               <Text style={styles.label}>Name</Text>
               <TextInput
+                ref={nameInputRef}
                 style={styles.input}
                 value={name}
                 onChangeText={setName}
@@ -93,6 +106,9 @@ export default function JoinMatchScreen() {
                 placeholderTextColor="#6b7280"
                 autoComplete="name"
                 autoCorrect={false}
+                onFocus={() => handleInputFocus(nameInputRef)}
+                returnKeyType="next"
+                onSubmitEditing={() => notesInputRef.current?.focus()}
                 // Web-specific props for better interaction
                 {...(Platform.OS === 'web' && {
                   autoComplete: 'name',
@@ -129,6 +145,7 @@ export default function JoinMatchScreen() {
             <View style={styles.formGroup}>
               <Text style={styles.label}>Additional Notes</Text>
               <TextInput
+                ref={notesInputRef}
                 style={[styles.input, styles.notesInput]}
                 value={notes}
                 onChangeText={setNotes}
@@ -138,6 +155,9 @@ export default function JoinMatchScreen() {
                 numberOfLines={4}
                 textAlignVertical="top"
                 autoCorrect={true}
+                onFocus={() => handleInputFocus(notesInputRef)}
+                returnKeyType="done"
+                blurOnSubmit={true}
                 // Web-specific props for better interaction
                 {...(Platform.OS === 'web' && {
                   autoComplete: 'off',

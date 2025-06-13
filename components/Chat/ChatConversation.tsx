@@ -150,19 +150,21 @@ export default function ChatConversation({ chatId, onBack }: ChatConversationPro
       setMessages(prev => [...prev, newMessage]);
       setInputText('');
       
-      // Blur the input after sending to dismiss keyboard
+      // Keep focus on input after sending
       if (Platform.OS === 'web') {
-        textInputRef.current?.blur();
+        setTimeout(() => {
+          textInputRef.current?.focus();
+        }, 50);
       }
     }
   };
 
   const handleInputFocus = () => {
-    // Ensure input is focused properly on web
+    // Ensure input stays focused properly on web
     if (Platform.OS === 'web') {
       setTimeout(() => {
         textInputRef.current?.focus();
-      }, 100);
+      }, 50);
     }
   };
 
@@ -171,6 +173,13 @@ export default function ChatConversation({ chatId, onBack }: ChatConversationPro
       textInputRef.current?.blur();
     } else {
       Keyboard.dismiss();
+    }
+  };
+
+  const handleInputPress = () => {
+    // Force focus when input area is pressed
+    if (Platform.OS === 'web') {
+      textInputRef.current?.focus();
     }
   };
 
@@ -205,7 +214,11 @@ export default function ChatConversation({ chatId, onBack }: ChatConversationPro
               ))}
             </ScrollView>
 
-            <View style={styles.inputContainer}>
+            <TouchableOpacity 
+              style={styles.inputContainer}
+              onPress={handleInputPress}
+              activeOpacity={1}
+            >
               <TextInput
                 ref={textInputRef}
                 style={styles.textInput}
@@ -237,7 +250,7 @@ export default function ChatConversation({ chatId, onBack }: ChatConversationPro
               >
                 <Send size={20} color="#ffffff" />
               </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
           </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
       </Animated.View>
