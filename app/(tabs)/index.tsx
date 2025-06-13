@@ -99,16 +99,18 @@ export default function HomeScreen() {
     // Close the rating popup first
     setRatingPopupVisible(false);
     
+    // Show thank you toast
+    setToastVisible(true);
+    setTimeout(() => {
+      setToastVisible(false);
+    }, 3000);
+    
     // Only show teammates rating screen if:
     // 1. The "Rate all players" toggle is enabled AND we don't have teammate ratings yet, OR
     // 2. User explicitly requested to rate teammates (this would be handled by a separate button/action)
-    // 
-    // We should NOT show it just because rateAllPlayers is false and there are no ratings
     if (rateAllPlayers && (!teammateRatings || Object.keys(teammateRatings).length === 0)) {
       setRateTeammatesVisible(true);
     }
-    // If rateAllPlayers is false, we simply don't show the teammates screen
-    // The user has chosen not to rate all players, so we respect that choice
   };
 
   const handleTeammateRatingsSubmit = (ratings: Record<string, number>) => {
@@ -184,7 +186,7 @@ export default function HomeScreen() {
       
       <CustomToast
         visible={toastVisible}
-        message="Request sent. Waiting for team approval."
+        message={params.showToast === '1' ? "Request sent. Waiting for team approval." : "Thanks for your ratings!"}
         onHide={() => setToastVisible(false)}
       />
       
