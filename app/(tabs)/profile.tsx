@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
-import { CreditCard as Edit3 } from 'lucide-react-native';
+import { Edit3, CreditCard } from 'lucide-react-native';
 import ProfileHeader from '@/components/Profile/ProfileHeader';
 import EditProfileModal from '@/components/Profile/EditProfileModal';
 
@@ -13,6 +13,11 @@ export default function ProfileScreen() {
     setEditModalVisible(true);
   };
 
+  const handlePaymentPress = () => {
+    // Handle payment/billing functionality
+    console.log('Payment button pressed');
+  };
+
   const handleSaveProfile = (newPosition: string, newLocation: string) => {
     setPreferredPosition(newPosition);
     setLocation(newLocation);
@@ -23,13 +28,22 @@ export default function ProfileScreen() {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.title}>Profile</Text>
-        <TouchableOpacity 
-          style={styles.editButton}
-          onPress={handleEditPress}
-          activeOpacity={0.7}
-        >
-          <Edit3 size={20} color="#3b82f6" />
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity 
+            style={styles.paymentButton}
+            onPress={handlePaymentPress}
+            activeOpacity={0.7}
+          >
+            <CreditCard size={20} color="#3b82f6" />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.editButton}
+            onPress={handleEditPress}
+            activeOpacity={0.7}
+          >
+            <Edit3 size={20} color="#3b82f6" />
+          </TouchableOpacity>
+        </View>
       </View>
       
       <ProfileHeader
@@ -76,6 +90,21 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '700',
     color: '#ffffff',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  paymentButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(59, 130, 246, 0.3)',
   },
   editButton: {
     width: 40,
