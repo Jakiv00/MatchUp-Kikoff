@@ -1,18 +1,45 @@
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Edit3 } from 'lucide-react-native';
 import ProfileHeader from '@/components/Profile/ProfileHeader';
+import EditProfileModal from '@/components/Profile/EditProfileModal';
 
 export default function ProfileScreen() {
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [preferredPosition, setPreferredPosition] = useState('ST');
+  const [location, setLocation] = useState('Los Angeles, CA');
+
+  const handleEditPress = () => {
+    setEditModalVisible(true);
+  };
+
+  const handleSaveProfile = (newPosition: string, newLocation: string) => {
+    setPreferredPosition(newPosition);
+    setLocation(newLocation);
+    setEditModalVisible(false);
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Profile</Text>
+      <View style={styles.headerContainer}>
+        <Text style={styles.title}>Profile</Text>
+        <TouchableOpacity 
+          style={styles.editButton}
+          onPress={handleEditPress}
+          activeOpacity={0.7}
+        >
+          <Edit3 size={20} color="#3b82f6" />
+        </TouchableOpacity>
+      </View>
       
       <ProfileHeader
         username="Alex Rodriguez"
         email="alex.rodriguez@email.com"
-        location="Los Angeles, CA"
+        location={location}
         rating={4.8}
         matchesPlayed={34}
         teamRating={4.2}
+        preferredPosition={preferredPosition}
       />
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -20,6 +47,14 @@ export default function ProfileScreen() {
           <Text style={styles.placeholderText}>Additional profile content will go here</Text>
         </View>
       </ScrollView>
+
+      <EditProfileModal
+        visible={editModalVisible}
+        onClose={() => setEditModalVisible(false)}
+        onSave={handleSaveProfile}
+        currentPosition={preferredPosition}
+        currentLocation={location}
+      />
     </View>
   );
 }
@@ -29,13 +64,28 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0f1115',
   },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    marginTop: 50,
+    marginBottom: 8,
+  },
   title: {
     fontSize: 28,
     fontWeight: '700',
     color: '#ffffff',
-    marginTop: 50,
-    marginBottom: 8,
-    paddingHorizontal: 16,
+  },
+  editButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(59, 130, 246, 0.3)',
   },
   content: {
     flex: 1,
