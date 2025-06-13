@@ -40,11 +40,8 @@ export default function JoinMatchScreen() {
       notes,
     });
     
-    // Show toast and navigate back
-    setToastVisible(true);
-    setTimeout(() => {
-      router.replace({ pathname: '/(tabs)', params: { showToast: '1' } });
-    }, 500);
+    // Navigate back to home screen with showToast parameter
+    router.replace({ pathname: '/(tabs)', params: { showToast: '1' } });
   };
 
   return (
