@@ -9,6 +9,7 @@ interface ProfileHeaderProps {
   rating?: number;
   matchesPlayed?: number;
   teamRating?: number;
+  preferredPosition?: string;
 }
 
 export default function ProfileHeader({
@@ -18,6 +19,7 @@ export default function ProfileHeader({
   rating = 4.8,
   matchesPlayed = 34,
   teamRating = 4.2,
+  preferredPosition = 'ST',
 }: ProfileHeaderProps) {
   const renderStars = (rating: number) => {
     const stars = [];
@@ -59,6 +61,25 @@ export default function ProfileHeader({
     return stars;
   };
 
+  const getPositionColor = (position: string) => {
+    switch (position) {
+      case 'GK': return '#6366f1';
+      case 'DEF': 
+      case 'LB':
+      case 'CB':
+      case 'RB': return '#10b981';
+      case 'MID':
+      case 'CM':
+      case 'CDM':
+      case 'CAM': return '#f59e0b';
+      case 'FWD':
+      case 'ST':
+      case 'LW':
+      case 'RW': return '#ef4444';
+      default: return '#3b82f6';
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Rating Card - Top Left */}
@@ -79,6 +100,18 @@ export default function ProfileHeader({
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>Team rating:</Text>
             <Text style={styles.statValue}>{teamRating}</Text>
+          </View>
+          
+          <View style={styles.statItem}>
+            <Text style={styles.statLabel}>Preferred position:</Text>
+            <View style={styles.positionContainer}>
+              <View style={[
+                styles.positionBadge,
+                { backgroundColor: getPositionColor(preferredPosition) }
+              ]}>
+                <Text style={styles.positionText}>{preferredPosition}</Text>
+              </View>
+            </View>
           </View>
         </View>
       </View>
@@ -106,7 +139,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     flex: 0.48,
-    minHeight: 140,
+    minHeight: 170, // Increased from 140 to accommodate new stat
   },
   ratingTitle: {
     fontSize: 18,
@@ -142,6 +175,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#3b82f6',
+  },
+  positionContainer: {
+    alignItems: 'flex-end',
+  },
+  positionBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    minWidth: 32,
+    alignItems: 'center',
+  },
+  positionText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '700',
   },
   userInfoBlock: {
     flex: 0.48,
