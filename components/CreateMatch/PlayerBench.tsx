@@ -147,8 +147,7 @@ export default function PlayerBench({
           onPress={() => setShowAddPlayersModal(true)}
           activeOpacity={0.7}
         >
-          <UserPlus size={24} color="#3b82f6" />
-          <Text style={styles.addPlayerText}>Add</Text>
+          <UserPlus size={32} color="#3b82f6" />
         </TouchableOpacity>
       </ScrollView>
 
@@ -292,12 +291,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 16,
     marginBottom: 16,
-  },
-  addPlayerText: {
-    color: '#3b82f6',
-    fontSize: 10,
-    fontWeight: '600',
-    marginTop: 2,
   },
   modalOverlay: {
     flex: 1,
