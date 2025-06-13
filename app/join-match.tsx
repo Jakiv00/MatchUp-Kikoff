@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, X } from 'lucide-react-native';
 import CustomToast from '@/components/CustomToast';
@@ -44,8 +44,20 @@ export default function JoinMatchScreen() {
     router.replace({ pathname: '/(tabs)', params: { showToast: '1' } });
   };
 
+  const dismissKeyboard = () => {
+    if (Platform.OS === 'web') {
+      // For web, we need to blur the active element
+      const activeElement = document.activeElement as HTMLElement;
+      if (activeElement && activeElement.blur) {
+        activeElement.blur();
+      }
+    } else {
+      Keyboard.dismiss();
+    }
+  };
+
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
@@ -79,6 +91,13 @@ export default function JoinMatchScreen() {
                 onChangeText={setName}
                 placeholder="Enter your name"
                 placeholderTextColor="#6b7280"
+                autoComplete="name"
+                autoCorrect={false}
+                // Web-specific props for better interaction
+                {...(Platform.OS === 'web' && {
+                  autoComplete: 'name',
+                  spellCheck: false,
+                })}
               />
             </View>
             
@@ -118,6 +137,12 @@ export default function JoinMatchScreen() {
                 multiline
                 numberOfLines={4}
                 textAlignVertical="top"
+                autoCorrect={true}
+                // Web-specific props for better interaction
+                {...(Platform.OS === 'web' && {
+                  autoComplete: 'off',
+                  spellCheck: true,
+                })}
               />
             </View>
           </View>
@@ -209,10 +234,20 @@ const styles = StyleSheet.create({
     padding: 12,
     color: '#ffffff',
     fontSize: 16,
+    // Web-specific styles for better interaction
+    ...(Platform.OS === 'web' && {
+      outlineStyle: 'none',
+      resize: 'none',
+    }),
   },
   notesInput: {
     height: 100,
     paddingTop: 12,
+    // Web-specific styles for multiline input
+    ...(Platform.OS === 'web' && {
+      resize: 'vertical',
+      minHeight: 100,
+    }),
   },
   positionsContainer: {
     flexDirection: 'row',

@@ -8,6 +8,9 @@ import {
   TextInput,
   ScrollView,
   Dimensions,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -91,6 +94,18 @@ export default function EditProfileModal({
     onClose();
   };
 
+  const dismissKeyboard = () => {
+    if (Platform.OS === 'web') {
+      // For web, we need to blur the active element
+      const activeElement = document.activeElement as HTMLElement;
+      if (activeElement && activeElement.blur) {
+        activeElement.blur();
+      }
+    } else {
+      Keyboard.dismiss();
+    }
+  };
+
   if (!visible) return null;
 
   return (
@@ -101,88 +116,98 @@ export default function EditProfileModal({
       onRequestClose={handleClose}
       statusBarTranslucent
     >
-      <Animated.View style={[styles.backdrop, animatedBackdropStyle]}>
-        <View style={styles.backdropContainer}>
-          <Animated.View style={[styles.modalContainer, animatedModalStyle]}>
-            {/* Header */}
-            <View style={styles.header}>
-              <Text style={styles.headerTitle}>Edit Profile</Text>
-              <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
-                <X size={24} color="#9ca3af" />
-              </TouchableOpacity>
-            </View>
-
-            <ScrollView 
-              style={styles.scrollContent}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.scrollContentContainer}
-            >
-              {/* Location Section */}
-              <View style={styles.section}>
-                <View style={styles.sectionHeader}>
-                  <MapPin size={20} color="#3b82f6" />
-                  <Text style={styles.sectionTitle}>Location</Text>
-                </View>
-                <TextInput
-                  style={styles.textInput}
-                  value={location}
-                  onChangeText={setLocation}
-                  placeholder="Enter your location"
-                  placeholderTextColor="#9ca3af"
-                />
+      <TouchableWithoutFeedback onPress={dismissKeyboard}>
+        <Animated.View style={[styles.backdrop, animatedBackdropStyle]}>
+          <View style={styles.backdropContainer}>
+            <Animated.View style={[styles.modalContainer, animatedModalStyle]}>
+              {/* Header */}
+              <View style={styles.header}>
+                <Text style={styles.headerTitle}>Edit Profile</Text>
+                <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
+                  <X size={24} color="#9ca3af" />
+                </TouchableOpacity>
               </View>
 
-              {/* Preferred Position Section */}
-              <View style={styles.section}>
-                <View style={styles.sectionHeader}>
-                  <User size={20} color="#3b82f6" />
-                  <Text style={styles.sectionTitle}>Preferred Position</Text>
-                </View>
-                
-                <View style={styles.positionsGrid}>
-                  {positions.map((position) => (
-                    <TouchableOpacity
-                      key={position.id}
-                      style={[
-                        styles.positionButton,
-                        selectedPosition === position.id && styles.selectedPositionButton,
-                        { borderColor: position.color }
-                      ]}
-                      onPress={() => setSelectedPosition(position.id)}
-                      activeOpacity={0.7}
-                    >
-                      <View style={[
-                        styles.positionBadge,
-                        { backgroundColor: position.color },
-                        selectedPosition === position.id && styles.selectedPositionBadge
-                      ]}>
-                        <Text style={styles.positionCode}>{position.id}</Text>
-                      </View>
-                      <Text style={[
-                        styles.positionLabel,
-                        selectedPosition === position.id && styles.selectedPositionLabel
-                      ]}>
-                        {position.label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-            </ScrollView>
-
-            {/* Save Button */}
-            <View style={styles.footer}>
-              <TouchableOpacity
-                style={styles.saveButton}
-                onPress={handleSave}
-                activeOpacity={0.8}
+              <ScrollView 
+                style={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContentContainer}
               >
-                <Text style={styles.saveButtonText}>Save Changes</Text>
-              </TouchableOpacity>
-            </View>
-          </Animated.View>
-        </View>
-      </Animated.View>
+                {/* Location Section */}
+                <View style={styles.section}>
+                  <View style={styles.sectionHeader}>
+                    <MapPin size={20} color="#3b82f6" />
+                    <Text style={styles.sectionTitle}>Location</Text>
+                  </View>
+                  <TextInput
+                    style={styles.textInput}
+                    value={location}
+                    onChangeText={setLocation}
+                    placeholder="Enter your location"
+                    placeholderTextColor="#9ca3af"
+                    autoComplete="address-line1"
+                    autoCorrect={false}
+                    // Web-specific props for better interaction
+                    {...(Platform.OS === 'web' && {
+                      autoComplete: 'address-line1',
+                      spellCheck: false,
+                      outlineStyle: 'none',
+                    })}
+                  />
+                </View>
+
+                {/* Preferred Position Section */}
+                <View style={styles.section}>
+                  <View style={styles.sectionHeader}>
+                    <User size={20} color="#3b82f6" />
+                    <Text style={styles.sectionTitle}>Preferred Position</Text>
+                  </View>
+                  
+                  <View style={styles.positionsGrid}>
+                    {positions.map((position) => (
+                      <TouchableOpacity
+                        key={position.id}
+                        style={[
+                          styles.positionButton,
+                          selectedPosition === position.id && styles.selectedPositionButton,
+                          { borderColor: position.color }
+                        ]}
+                        onPress={() => setSelectedPosition(position.id)}
+                        activeOpacity={0.7}
+                      >
+                        <View style={[
+                          styles.positionBadge,
+                          { backgroundColor: position.color },
+                          selectedPosition === position.id && styles.selectedPositionBadge
+                        ]}>
+                          <Text style={styles.positionCode}>{position.id}</Text>
+                        </View>
+                        <Text style={[
+                          styles.positionLabel,
+                          selectedPosition === position.id && styles.selectedPositionLabel
+                        ]}>
+                          {position.label}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              </ScrollView>
+
+              {/* Save Button */}
+              <View style={styles.footer}>
+                <TouchableOpacity
+                  style={styles.saveButton}
+                  onPress={handleSave}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.saveButtonText}>Save Changes</Text>
+                </TouchableOpacity>
+              </View>
+            </Animated.View>
+          </View>
+        </Animated.View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 }
@@ -264,6 +289,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderWidth: 1,
     borderColor: '#4b5563',
+    // Web-specific styles for better interaction
+    ...(Platform.OS === 'web' && {
+      outlineStyle: 'none',
+    }),
   },
   positionsGrid: {
     flexDirection: 'row',

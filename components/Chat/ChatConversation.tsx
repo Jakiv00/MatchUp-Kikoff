@@ -102,6 +102,7 @@ export default function ChatConversation({ chatId, onBack }: ChatConversationPro
   const [messages, setMessages] = useState<Message[]>(mockMessages[chatId] || []);
   const [inputText, setInputText] = useState('');
   const scrollViewRef = useRef<ScrollView>(null);
+  const textInputRef = useRef<TextInput>(null);
   const translateX = useSharedValue(0);
 
   const playerName = playerNames[chatId] || 'Player';
@@ -148,6 +149,28 @@ export default function ChatConversation({ chatId, onBack }: ChatConversationPro
 
       setMessages(prev => [...prev, newMessage]);
       setInputText('');
+      
+      // Blur the input after sending to dismiss keyboard
+      if (Platform.OS === 'web') {
+        textInputRef.current?.blur();
+      }
+    }
+  };
+
+  const handleInputFocus = () => {
+    // Ensure input is focused properly on web
+    if (Platform.OS === 'web') {
+      setTimeout(() => {
+        textInputRef.current?.focus();
+      }, 100);
+    }
+  };
+
+  const dismissKeyboard = () => {
+    if (Platform.OS === 'web') {
+      textInputRef.current?.blur();
+    } else {
+      Keyboard.dismiss();
     }
   };
 
@@ -165,7 +188,7 @@ export default function ChatConversation({ chatId, onBack }: ChatConversationPro
           <View style={styles.headerRight} />
         </View>
 
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
           <KeyboardAvoidingView
             style={styles.content}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -184,6 +207,7 @@ export default function ChatConversation({ chatId, onBack }: ChatConversationPro
 
             <View style={styles.inputContainer}>
               <TextInput
+                ref={textInputRef}
                 style={styles.textInput}
                 value={inputText}
                 onChangeText={setInputText}
@@ -191,6 +215,17 @@ export default function ChatConversation({ chatId, onBack }: ChatConversationPro
                 placeholderTextColor="#9ca3af"
                 multiline
                 maxLength={500}
+                onFocus={handleInputFocus}
+                onSubmitEditing={handleSendMessage}
+                blurOnSubmit={false}
+                returnKeyType="send"
+                enablesReturnKeyAutomatically={true}
+                // Web-specific props for better interaction
+                {...(Platform.OS === 'web' && {
+                  autoComplete: 'off',
+                  autoCorrect: false,
+                  spellCheck: false,
+                })}
               />
               <TouchableOpacity
                 style={[
@@ -275,6 +310,12 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     maxHeight: 100,
+    minHeight: 40,
+    // Web-specific styles for better interaction
+    ...(Platform.OS === 'web' && {
+      outlineStyle: 'none',
+      resize: 'none',
+    }),
   },
   sendButton: {
     width: 40,
