@@ -68,6 +68,15 @@ export default function JoinMatchScreen() {
     }
   };
 
+  const handleInputPress = (inputRef: React.RefObject<TextInput>) => {
+    // Force focus when input area is pressed
+    if (Platform.OS === 'web') {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
@@ -97,24 +106,30 @@ export default function JoinMatchScreen() {
           <View style={styles.formContainer}>
             <View style={styles.formGroup}>
               <Text style={styles.label}>Name</Text>
-              <TextInput
-                ref={nameInputRef}
-                style={styles.input}
-                value={name}
-                onChangeText={setName}
-                placeholder="Enter your name"
-                placeholderTextColor="#6b7280"
-                autoComplete="name"
-                autoCorrect={false}
-                onFocus={() => handleInputFocus(nameInputRef)}
-                returnKeyType="next"
-                onSubmitEditing={() => notesInputRef.current?.focus()}
-                // Web-specific props for better interaction
-                {...(Platform.OS === 'web' && {
-                  autoComplete: 'name',
-                  spellCheck: false,
-                })}
-              />
+              <TouchableOpacity
+                style={styles.inputWrapper}
+                onPress={() => handleInputPress(nameInputRef)}
+                activeOpacity={1}
+              >
+                <TextInput
+                  ref={nameInputRef}
+                  style={styles.input}
+                  value={name}
+                  onChangeText={setName}
+                  placeholder="Enter your name"
+                  placeholderTextColor="#6b7280"
+                  autoComplete="name"
+                  autoCorrect={false}
+                  onFocus={() => handleInputFocus(nameInputRef)}
+                  returnKeyType="next"
+                  onSubmitEditing={() => notesInputRef.current?.focus()}
+                  // Web-specific props for better interaction
+                  {...(Platform.OS === 'web' && {
+                    autoComplete: 'name',
+                    spellCheck: false,
+                  })}
+                />
+              </TouchableOpacity>
             </View>
             
             <View style={styles.formGroup}>
@@ -144,26 +159,32 @@ export default function JoinMatchScreen() {
             
             <View style={styles.formGroup}>
               <Text style={styles.label}>Additional Notes</Text>
-              <TextInput
-                ref={notesInputRef}
-                style={[styles.input, styles.notesInput]}
-                value={notes}
-                onChangeText={setNotes}
-                placeholder="Any additional information you'd like to share"
-                placeholderTextColor="#6b7280"
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-                autoCorrect={true}
-                onFocus={() => handleInputFocus(notesInputRef)}
-                returnKeyType="done"
-                blurOnSubmit={true}
-                // Web-specific props for better interaction
-                {...(Platform.OS === 'web' && {
-                  autoComplete: 'off',
-                  spellCheck: true,
-                })}
-              />
+              <TouchableOpacity
+                style={styles.inputWrapper}
+                onPress={() => handleInputPress(notesInputRef)}
+                activeOpacity={1}
+              >
+                <TextInput
+                  ref={notesInputRef}
+                  style={[styles.input, styles.notesInput]}
+                  value={notes}
+                  onChangeText={setNotes}
+                  placeholder="Any additional information you'd like to share"
+                  placeholderTextColor="#6b7280"
+                  multiline
+                  numberOfLines={4}
+                  textAlignVertical="top"
+                  autoCorrect={true}
+                  onFocus={() => handleInputFocus(notesInputRef)}
+                  returnKeyType="done"
+                  blurOnSubmit={true}
+                  // Web-specific props for better interaction
+                  {...(Platform.OS === 'web' && {
+                    autoComplete: 'off',
+                    spellCheck: true,
+                  })}
+                />
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -247,6 +268,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#ffffff',
     marginBottom: 8,
+  },
+  inputWrapper: {
+    // Wrapper to handle touch events for better focus
   },
   input: {
     backgroundColor: '#374151',
