@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
-import { CreditCard as Edit3, CreditCard } from 'lucide-react-native';
+import { Edit3, CreditCard } from 'lucide-react-native';
 import ProfileHeader from '@/components/Profile/ProfileHeader';
 import EditProfileModal from '@/components/Profile/EditProfileModal';
 
