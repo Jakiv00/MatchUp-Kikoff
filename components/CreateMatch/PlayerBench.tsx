@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Modal } from 'react-native';
-import { UserPlus, Check, X, User, Plus } from 'lucide-react-native';
+import { UserPlus, Check, X } from 'lucide-react-native';
 
 interface Player {
   id: string;
@@ -147,12 +147,8 @@ export default function PlayerBench({
           onPress={() => setShowAddPlayersModal(true)}
           activeOpacity={0.7}
         >
-          <View style={styles.addPlayerIconContainer}>
-            <User size={20} color="#3b82f6" />
-            <View style={styles.plusIconOverlay}>
-              <Plus size={14} color="#3b82f6" />
-            </View>
-          </View>
+          <UserPlus size={24} color="#3b82f6" />
+          <Text style={styles.addPlayerText}>Add</Text>
         </TouchableOpacity>
       </ScrollView>
 
@@ -297,23 +293,11 @@ const styles = StyleSheet.create({
     marginRight: 16,
     marginBottom: 16,
   },
-  addPlayerIconContainer: {
-    position: 'relative',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  plusIconOverlay: {
-    position: 'absolute',
-    bottom: -8,
-    right: -8,
-    backgroundColor: 'rgba(59, 130, 246, 0.2)',
-    borderRadius: 10,
-    width: 20,
-    height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#3b82f6',
+  addPlayerText: {
+    color: '#3b82f6',
+    fontSize: 10,
+    fontWeight: '600',
+    marginTop: 2,
   },
   modalOverlay: {
     flex: 1,
