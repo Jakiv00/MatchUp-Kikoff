@@ -9,6 +9,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   Dimensions,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -163,44 +165,46 @@ export default function ChatConversation({ chatId, onBack }: ChatConversationPro
           <View style={styles.headerRight} />
         </View>
 
-        <KeyboardAvoidingView
-          style={styles.content}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-        >
-          <ScrollView
-            ref={scrollViewRef}
-            style={styles.messagesContainer}
-            contentContainerStyle={styles.messagesContent}
-            showsVerticalScrollIndicator={false}
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <KeyboardAvoidingView
+            style={styles.content}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
           >
-            {messages.map((message) => (
-              <MessageBubble key={message.id} message={message} />
-            ))}
-          </ScrollView>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.textInput}
-              value={inputText}
-              onChangeText={setInputText}
-              placeholder="Type a message..."
-              placeholderTextColor="#9ca3af"
-              multiline
-              maxLength={500}
-            />
-            <TouchableOpacity
-              style={[
-                styles.sendButton,
-                inputText.trim() ? styles.sendButtonActive : styles.sendButtonInactive,
-              ]}
-              onPress={handleSendMessage}
-              disabled={!inputText.trim()}
+            <ScrollView
+              ref={scrollViewRef}
+              style={styles.messagesContainer}
+              contentContainerStyle={styles.messagesContent}
+              showsVerticalScrollIndicator={false}
             >
-              <Send size={20} color="#ffffff" />
-            </TouchableOpacity>
-          </View>
-        </KeyboardAvoidingView>
+              {messages.map((message) => (
+                <MessageBubble key={message.id} message={message} />
+              ))}
+            </ScrollView>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.textInput}
+                value={inputText}
+                onChangeText={setInputText}
+                placeholder="Type a message..."
+                placeholderTextColor="#9ca3af"
+                multiline
+                maxLength={500}
+              />
+              <TouchableOpacity
+                style={[
+                  styles.sendButton,
+                  inputText.trim() ? styles.sendButtonActive : styles.sendButtonInactive,
+                ]}
+                onPress={handleSendMessage}
+                disabled={!inputText.trim()}
+              >
+                <Send size={20} color="#ffffff" />
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
       </Animated.View>
     </PanGestureHandler>
   );
