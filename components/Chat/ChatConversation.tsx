@@ -197,62 +197,57 @@ export default function ChatConversation({ chatId, onBack }: ChatConversationPro
           <View style={styles.headerRight} />
         </View>
 
-        <TouchableWithoutFeedback onPress={dismissKeyboard}>
-          <KeyboardAvoidingView
-            style={styles.content}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        <KeyboardAvoidingView
+          style={styles.content}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        >
+          <ScrollView
+            ref={scrollViewRef}
+            style={styles.messagesContainer}
+            contentContainerStyle={styles.messagesContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
           >
-            <ScrollView
-              ref={scrollViewRef}
-              style={styles.messagesContainer}
-              contentContainerStyle={styles.messagesContent}
-              showsVerticalScrollIndicator={false}
-            >
-              {messages.map((message) => (
-                <MessageBubble key={message.id} message={message} />
-              ))}
-            </ScrollView>
+            {messages.map((message) => (
+              <MessageBubble key={message.id} message={message} />
+            ))}
+          </ScrollView>
 
-            <TouchableOpacity 
-              style={styles.inputContainer}
-              onPress={handleInputPress}
-              activeOpacity={1}
+          <View style={styles.inputContainer}>
+            <TextInput
+              ref={textInputRef}
+              style={styles.textInput}
+              value={inputText}
+              onChangeText={setInputText}
+              placeholder="Type a message..."
+              placeholderTextColor="#9ca3af"
+              multiline
+              maxLength={500}
+              onFocus={handleInputFocus}
+              onSubmitEditing={handleSendMessage}
+              blurOnSubmit={false}
+              returnKeyType="send"
+              enablesReturnKeyAutomatically={true}
+              // Web-specific props for better interaction
+              {...(Platform.OS === 'web' && {
+                autoComplete: 'off',
+                autoCorrect: false,
+                spellCheck: false,
+              })}
+            />
+            <TouchableOpacity
+              style={[
+                styles.sendButton,
+                inputText.trim() ? styles.sendButtonActive : styles.sendButtonInactive,
+              ]}
+              onPress={handleSendMessage}
+              disabled={!inputText.trim()}
             >
-              <TextInput
-                ref={textInputRef}
-                style={styles.textInput}
-                value={inputText}
-                onChangeText={setInputText}
-                placeholder="Type a message..."
-                placeholderTextColor="#9ca3af"
-                multiline
-                maxLength={500}
-                onFocus={handleInputFocus}
-                onSubmitEditing={handleSendMessage}
-                blurOnSubmit={false}
-                returnKeyType="send"
-                enablesReturnKeyAutomatically={true}
-                // Web-specific props for better interaction
-                {...(Platform.OS === 'web' && {
-                  autoComplete: 'off',
-                  autoCorrect: false,
-                  spellCheck: false,
-                })}
-              />
-              <TouchableOpacity
-                style={[
-                  styles.sendButton,
-                  inputText.trim() ? styles.sendButtonActive : styles.sendButtonInactive,
-                ]}
-                onPress={handleSendMessage}
-                disabled={!inputText.trim()}
-              >
-                <Send size={20} color="#ffffff" />
-              </TouchableOpacity>
+              <Send size={20} color="#ffffff" />
             </TouchableOpacity>
-          </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
+          </View>
+        </KeyboardAvoidingView>
       </Animated.View>
     </PanGestureHandler>
   );
@@ -270,6 +265,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#1a1d23',
+    // Add safe area padding for iOS
+    paddingTop: Platform.OS === 'ios' ? 12 : 12,
   },
   backButton: {
     width: 40,
@@ -303,6 +300,7 @@ const styles = StyleSheet.create({
   messagesContent: {
     paddingHorizontal: 16,
     paddingVertical: 8,
+    paddingBottom: 16,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -312,6 +310,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#1a1d23',
     backgroundColor: '#0f1115',
+    // Add safe area padding for devices with home indicator
+    paddingBottom: Platform.OS === 'ios' ? 34 : 12,
   },
   textInput: {
     flex: 1,
