@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, X } from 'lucide-react-native';
+import CustomToast from '@/components/CustomToast';
 
 export default function JoinMatchScreen() {
   const params = useLocalSearchParams();
@@ -10,6 +11,7 @@ export default function JoinMatchScreen() {
   const [name, setName] = useState('');
   const [position, setPosition] = useState('');
   const [notes, setNotes] = useState('');
+  const [toastVisible, setToastVisible] = useState(false);
   
   const positions = [
     'GK', 'DEF', 'MID', 'FWD', 'Any'
@@ -21,12 +23,12 @@ export default function JoinMatchScreen() {
   
   const handleSubmit = () => {
     if (!name.trim()) {
-      Alert.alert('Error', 'Please enter your name');
+      setToastVisible(true);
       return;
     }
     
     if (!position) {
-      Alert.alert('Error', 'Please select your preferred position');
+      setToastVisible(true);
       return;
     }
     
@@ -38,12 +40,11 @@ export default function JoinMatchScreen() {
       notes,
     });
     
-    // Show success alert
-    Alert.alert(
-      'Request Sent',
-      'Your request to join has been sent. Awaiting team approval.',
-      [{ text: 'OK', onPress: () => router.back() }]
-    );
+    // Show toast and navigate back
+    setToastVisible(true);
+    setTimeout(() => {
+      router.replace({ pathname: '/(tabs)', params: { showToast: '1' } });
+    }, 500);
   };
 
   return (
@@ -139,6 +140,12 @@ export default function JoinMatchScreen() {
           <Text style={styles.submitButtonText}>Request to Join</Text>
         </TouchableOpacity>
       </View>
+
+      <CustomToast
+        visible={toastVisible}
+        message={!name.trim() ? "Please enter your name" : !position ? "Please select your preferred position" : "Request sent. Waiting for team approval."}
+        onHide={() => setToastVisible(false)}
+      />
     </View>
   );
 }

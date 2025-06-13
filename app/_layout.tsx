@@ -17,6 +17,7 @@ export default function RootLayout() {
           animation: 'fade',
         }}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="join-match" />
         <Stack.Screen name="+not-found" />
       </Stack>
     </View>

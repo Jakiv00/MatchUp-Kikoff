@@ -77,8 +77,7 @@ export default function HomeScreen() {
   };
 
   const handleJoinSpecificMatch = (matchId: string) => {
-    // Join specific match
-    console.log(`Join match ${matchId} pressed`);
+    router.push(`/join-match?id=${matchId}`);
   };
 
   const handleMoreOptions = (matchId: string) => {
