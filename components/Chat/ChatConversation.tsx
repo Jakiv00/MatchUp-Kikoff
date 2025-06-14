@@ -169,7 +169,7 @@ export default function ChatConversation({ chatId, onBack }: ChatConversationPro
           <KeyboardAvoidingView
             style={styles.content}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 235 : 205}
           >
             <ScrollView
               ref={scrollViewRef}
