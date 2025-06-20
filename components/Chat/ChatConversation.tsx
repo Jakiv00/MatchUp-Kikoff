@@ -98,11 +98,15 @@ const playerNames: Record<string, string> = {
   '5': 'Jeymi Moşe',
 };
 
+const BOTTOM_MENU_HEIGHT = 49; // Height of the bottom menu bar
+
 export default function ChatConversation({ chatId, onBack }: ChatConversationProps) {
   const [messages, setMessages] = useState<Message[]>(mockMessages[chatId] || []);
   const [inputText, setInputText] = useState('');
   const scrollViewRef = useRef<ScrollView>(null);
   const translateX = useSharedValue(0);
+  const inputTranslateY = useSharedValue(0);
+  const spacerHeight = useSharedValue(0);
 
   const playerName = playerNames[chatId] || 'Player';
 
@@ -151,6 +155,41 @@ export default function ChatConversation({ chatId, onBack }: ChatConversationPro
     }
   };
 
+  const handleInputFocus = () => {
+    const offset = Platform.OS === 'ios' ? 235 : 205;
+    const adjustedOffset = offset - 90;
+    inputTranslateY.value = withTiming(-adjustedOffset, { 
+      duration: Platform.OS === 'ios' ? 250 : 300 
+    });
+    
+    // Calculate and animate spacer height
+    const keyboardVerticalOffset = Platform.OS === 'ios' ? 90 : 0;
+    const newSpacerHeight = adjustedOffset - keyboardVerticalOffset - BOTTOM_MENU_HEIGHT;
+    spacerHeight.value = withTiming(newSpacerHeight, { 
+      duration: Platform.OS === 'ios' ? 250 : 300 
+    });
+  };
+
+  const handleInputBlur = () => {
+    inputTranslateY.value = withTiming(0, { 
+      duration: Platform.OS === 'ios' ? 250 : 300 
+    });
+    spacerHeight.value = withTiming(0, { 
+      duration: Platform.OS === 'ios' ? 250 : 300 
+    });
+  };
+
+  const inputAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: inputTranslateY.value }],
+  }));
+
+  const spacerAnimatedStyle = useAnimatedStyle(() => ({
+    height: spacerHeight.value,
+  }));
+
+  const chatAnimatedStyle = useAnimatedStyle(() => ({
+  }));
+
   return (
     <PanGestureHandler onGestureEvent={gestureHandler}>
       <Animated.View style={[styles.container, animatedStyle]}>
@@ -165,46 +204,55 @@ export default function ChatConversation({ chatId, onBack }: ChatConversationPro
           <View style={styles.headerRight} />
         </View>
 
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <KeyboardAvoidingView
-            style={styles.content}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 235 : 205}
+        <KeyboardAvoidingView
+          style={styles.content}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        >
+          <Animated.View style={[styles.chatContainer, chatAnimatedStyle]}>
+          <ScrollView
+            ref={scrollViewRef}
+            style={styles.messagesContainer}
+            contentContainerStyle={styles.messagesContent}
+            showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              keyboardDismissMode="on-drag"
+              bounces={true}
+              overScrollMode="always"
+              onScrollBeginDrag={Keyboard.dismiss}
           >
-            <ScrollView
-              ref={scrollViewRef}
-              style={styles.messagesContainer}
-              contentContainerStyle={styles.messagesContent}
-              showsVerticalScrollIndicator={false}
-            >
-              {messages.map((message) => (
-                <MessageBubble key={message.id} message={message} />
-              ))}
-            </ScrollView>
+            {messages.map((message) => (
+              <MessageBubble key={message.id} message={message} />
+            ))}
+          </ScrollView>
+          </Animated.View>
 
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.textInput}
-                value={inputText}
-                onChangeText={setInputText}
-                placeholder="Type a message..."
-                placeholderTextColor="#9ca3af"
-                multiline
-                maxLength={500}
-              />
-              <TouchableOpacity
-                style={[
-                  styles.sendButton,
-                  inputText.trim() ? styles.sendButtonActive : styles.sendButtonInactive,
-                ]}
-                onPress={handleSendMessage}
-                disabled={!inputText.trim()}
-              >
-                <Send size={20} color="#ffffff" />
-              </TouchableOpacity>
-            </View>
-          </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
+          <Animated.View style={[styles.inputContainer, inputAnimatedStyle]}>
+            <TextInput
+              style={styles.textInput}
+              value={inputText}
+              onChangeText={setInputText}
+              placeholder="Type a message..."
+              placeholderTextColor="#9ca3af"
+              multiline
+              maxLength={500}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+            />
+            <TouchableOpacity
+              style={[
+                styles.sendButton,
+                inputText.trim() ? styles.sendButtonActive : styles.sendButtonInactive,
+              ]}
+              onPress={handleSendMessage}
+              disabled={!inputText.trim()}
+            >
+              <Send size={20} color="#ffffff" />
+            </TouchableOpacity>
+          </Animated.View>
+          
+          <Animated.View style={[styles.spacer, spacerAnimatedStyle]} />
+        </KeyboardAvoidingView>
       </Animated.View>
     </PanGestureHandler>
   );
@@ -249,12 +297,18 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
+  chatContainer: {
+    flex: 1,
+    overflow: 'hidden',
+  },
   messagesContainer: {
     flex: 1,
+    width: '100%',
   },
   messagesContent: {
     paddingHorizontal: 16,
     paddingVertical: 8,
+    flexGrow: 1,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -264,6 +318,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#1a1d23',
     backgroundColor: '#0f1115',
+    position: 'relative',
+    minHeight: 64,
+    maxHeight: 120,
   },
   textInput: {
     flex: 1,
@@ -275,6 +332,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     maxHeight: 100,
+    minHeight: 40,
   },
   sendButton: {
     width: 40,
@@ -288,5 +346,12 @@ const styles = StyleSheet.create({
   },
   sendButtonInactive: {
     backgroundColor: '#374151',
+  },
+  spacer: {
+    position: 'absolute',
+    bottom: BOTTOM_MENU_HEIGHT,
+    left: 0,
+    right: 0,
+    backgroundColor: '#0f1115',
   },
 });

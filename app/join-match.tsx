@@ -46,105 +46,105 @@ export default function JoinMatchScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={handleClose}
-          >
-            <ArrowLeft size={24} color="#ffffff" />
-          </TouchableOpacity>
-          
-          <Text style={styles.headerTitle}>Join Match</Text>
-          
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={handleClose}
-          >
-            <X size={24} color="#ffffff" />
-          </TouchableOpacity>
-        </View>
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={handleClose}
+        >
+          <ArrowLeft size={24} color="#ffffff" />
+        </TouchableOpacity>
         
-        <View style={styles.content}>
-          <Text style={styles.title}>Confirm Participation</Text>
-          <Text style={styles.subtitle}>Please provide the following information to join this match</Text>
+        <Text style={styles.headerTitle}>Join Match</Text>
+        
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={handleClose}
+        >
+          <X size={24} color="#ffffff" />
+        </TouchableOpacity>
+      </View>
+      
+      <View style={styles.content}>
+        <Text style={styles.title}>Confirm Participation</Text>
+        <Text style={styles.subtitle}>Please provide the following information to join this match</Text>
+        
+        <View style={styles.formContainer}>
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Name</Text>
+            <TextInput
+              style={styles.input}
+              value={name}
+              onChangeText={setName}
+              placeholder="Enter your name"
+              placeholderTextColor="#6b7280"
+            />
+          </View>
           
-          <View style={styles.formContainer}>
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Name</Text>
-              <TextInput
-                style={styles.input}
-                value={name}
-                onChangeText={setName}
-                placeholder="Enter your name"
-                placeholderTextColor="#6b7280"
-              />
-            </View>
-            
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Preferred Position</Text>
-              <View style={styles.positionsContainer}>
-                {positions.map((pos) => (
-                  <TouchableOpacity
-                    key={pos}
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Preferred Position</Text>
+            <View style={styles.positionsContainer}>
+              {positions.map((pos) => (
+                <TouchableOpacity
+                  key={pos}
+                  style={[
+                    styles.positionButton,
+                    position === pos && styles.selectedPositionButton
+                  ]}
+                  onPress={() => setPosition(pos)}
+                >
+                  <Text
                     style={[
-                      styles.positionButton,
-                      position === pos && styles.selectedPositionButton
+                      styles.positionButtonText,
+                      position === pos && styles.selectedPositionButtonText
                     ]}
-                    onPress={() => setPosition(pos)}
                   >
-                    <Text
-                      style={[
-                        styles.positionButtonText,
-                        position === pos && styles.selectedPositionButtonText
-                      ]}
-                    >
-                      {pos}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-            
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Additional Notes</Text>
-              <TextInput
-                style={[styles.input, styles.notesInput]}
-                value={notes}
-                onChangeText={setNotes}
-                placeholder="Any additional information you'd like to share"
-                placeholderTextColor="#6b7280"
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-              />
+                    {pos}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
-        </View>
-        
-        <View style={styles.footer}>
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={handleClose}
-          >
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
           
-          <TouchableOpacity
-            style={styles.submitButton}
-            onPress={handleSubmit}
-          >
-            <Text style={styles.submitButtonText}>Request to Join</Text>
-          </TouchableOpacity>
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Additional Notes</Text>
+            <TextInput
+              style={[styles.input, styles.notesInput]}
+              value={notes}
+              onChangeText={setNotes}
+              placeholder="Any additional information you'd like to share"
+              placeholderTextColor="#6b7280"
+              multiline
+              numberOfLines={4}
+              textAlignVertical="top"
+            />
+          </View>
         </View>
+      </View>
+      
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={styles.cancelButton}
+          onPress={handleClose}
+        >
+          <Text style={styles.cancelButtonText}>Cancel</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={handleSubmit}
+        >
+          <Text style={styles.submitButtonText}>Request to Join</Text>
+        </TouchableOpacity>
+      </View>
 
         <CustomToast
           visible={toastVisible}
           message={!name.trim() ? "Please enter your name" : !position ? "Please select your preferred position" : "Request sent. Waiting for team approval."}
           onHide={() => setToastVisible(false)}
         />
-      </View>
+    </View>
     </TouchableWithoutFeedback>
   );
 }
