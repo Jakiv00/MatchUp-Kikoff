@@ -186,7 +186,20 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
                 />
               </View>
 
-              {/* Team Size Selector */}
+              {/* Player Selection - Now moved above Team Size */}
+              <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>Players selected: {selectedPlayersCount}</Text>
+                </View>
+                <PlayerBench
+                  players={players}
+                  setPlayers={setPlayers}
+                  teamSize={teamSize}
+                  tacticsMode={false}
+                />
+              </View>
+
+              {/* Team Size Selector - Now moved below Player Selection */}
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Team Size</Text>
                 <View style={styles.componentWrapper}>
@@ -199,20 +212,6 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
                     setCustomSize={setCustomSize}
                   />
                 </View>
-              </View>
-
-              {/* Player Selection */}
-              <View style={styles.section}>
-                <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionTitle}>Players</Text>
-                  <Text style={styles.playerCount}>{selectedPlayersCount} added</Text>
-                </View>
-                <PlayerBench
-                  players={players}
-                  setPlayers={setPlayers}
-                  teamSize={teamSize}
-                  tacticsMode={false}
-                />
               </View>
 
               {/* Tactics Formation */}
@@ -331,15 +330,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#ffffff',
     marginBottom: 16,
-  },
-  playerCount: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#8b5cf6',
-    backgroundColor: 'rgba(139, 92, 246, 0.1)',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
   },
   textInput: {
     backgroundColor: '#0f1115',
