@@ -99,20 +99,6 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
     }
   }, [visible]);
 
-  // Reset formation when team size changes
-  useEffect(() => {
-    if (selectedFormation) {
-      // Clear the current formation when team size changes
-      setSelectedFormation(null);
-      
-      // Clear player positions since formation changed
-      setPlayers(prev => prev.map(player => ({
-        ...player,
-        position: undefined
-      })));
-    }
-  }, [teamSize]);
-
   const animatedBackdropStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
   }));
@@ -271,9 +257,6 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
               {/* Tactics Formation */}
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Formation & Tactics</Text>
-                <Text style={styles.sectionSubtitle}>
-                  Choose a formation for your {teamSize}v{teamSize} team
-                </Text>
                 <View style={styles.componentWrapper}>
                   <TacticsMenu
                     teamSize={teamSize}
@@ -389,12 +372,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#ffffff',
     marginBottom: 16,
-  },
-  sectionSubtitle: {
-    fontSize: 14,
-    color: '#9ca3af',
-    marginBottom: 16,
-    fontStyle: 'italic',
   },
   textInput: {
     backgroundColor: '#0f1115',
