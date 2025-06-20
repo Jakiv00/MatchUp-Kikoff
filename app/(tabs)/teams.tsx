@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { Plus } from 'lucide-react-native';
+import { router } from 'expo-router';
 import CreateTeamModal from '@/components/CreateTeam/CreateTeamModal';
 
 // Mock team data - replace with your actual team data source
@@ -78,7 +79,7 @@ export default function TeamsScreen() {
 
   const handleTeamPress = (teamId: string) => {
     // Navigate to team details
-    console.log('Team pressed:', teamId);
+    router.push(`/team-details?id=${teamId}`);
   };
 
   const renderTeamCard = (team: typeof mockTeams[0]) => (
