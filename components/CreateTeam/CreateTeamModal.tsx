@@ -140,6 +140,9 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
     return teamName.trim().length > 0 && selectedCount >= teamSize;
   };
 
+  // Calculate selected players count
+  const selectedPlayersCount = players.filter(p => p.selected || p.position).length;
+
   if (!visible) return null;
 
   return (
@@ -200,15 +203,16 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
 
               {/* Player Selection */}
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Select Players</Text>
-                <View style={styles.componentWrapper}>
-                  <PlayerBench
-                    players={players}
-                    setPlayers={setPlayers}
-                    teamSize={teamSize}
-                    tacticsMode={false}
-                  />
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>Players</Text>
+                  <Text style={styles.playerCount}>{selectedPlayersCount} added</Text>
                 </View>
+                <PlayerBench
+                  players={players}
+                  setPlayers={setPlayers}
+                  teamSize={teamSize}
+                  tacticsMode={false}
+                />
               </View>
 
               {/* Tactics Formation */}
@@ -316,11 +320,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 16,
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: '#ffffff',
     marginBottom: 16,
+  },
+  playerCount: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#8b5cf6',
+    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
   },
   textInput: {
     backgroundColor: '#0f1115',
