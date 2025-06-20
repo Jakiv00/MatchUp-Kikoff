@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { Plus } from 'lucide-react-native';
-import CreateTeamModal from '@/components/Teams/CreateTeamModal';
 
 // Mock team data - replace with your actual team data source
 const mockTeams = [
@@ -53,21 +52,14 @@ const mockTeams = [
 ];
 
 export default function TeamsScreen() {
-  const [createTeamModalVisible, setCreateTeamModalVisible] = useState(false);
-
   const handleCreateTeam = () => {
-    setCreateTeamModalVisible(true);
+    // Navigate to create team screen or show modal
+    console.log('Create team pressed');
   };
 
   const handleTeamPress = (teamId: string) => {
     // Navigate to team details
     console.log('Team pressed:', teamId);
-  };
-
-  const handleTeamCreated = (teamData: any) => {
-    console.log('Team created:', teamData);
-    setCreateTeamModalVisible(false);
-    // Here you would typically save the team data and refresh the list
   };
 
   const renderTeamCard = (team: typeof mockTeams[0]) => (
@@ -128,13 +120,6 @@ export default function TeamsScreen() {
       >
         {mockTeams.map(renderTeamCard)}
       </ScrollView>
-
-      {/* Create Team Modal */}
-      <CreateTeamModal
-        visible={createTeamModalVisible}
-        onClose={() => setCreateTeamModalVisible(false)}
-        onSubmit={handleTeamCreated}
-      />
     </View>
   );
 }
