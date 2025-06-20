@@ -17,12 +17,12 @@ import Animated, {
   withSpring,
   interpolate,
 } from 'react-native-reanimated';
-import { X, Save, Users } from 'lucide-react-native';
+import { X, Save, Users, Plus, ChevronRight } from 'lucide-react-native';
 
 // Import existing components
 import TeamSizeSelector from '@/components/CreateMatch/TeamSizeSelector';
 import TacticsMenu from '@/components/CreateMatch/TacticsMenu';
-import PlayerBench from '@/components/CreateMatch/PlayerBench';
+import PlayerSelectorModal from '@/components/CreateTeam/PlayerSelectorModal';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -48,6 +48,7 @@ interface Player {
   name: string;
   selected: boolean;
   position?: string;
+  preferredPosition: string;
 }
 
 interface CreateTeamModalProps {
@@ -72,20 +73,8 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
   const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
   
   // Players state
-  const [players, setPlayers] = useState<Player[]>([
-    { id: '1', initials: 'AE', name: 'Ahmet Eren', selected: false },
-    { id: '2', initials: 'JD', name: 'John Doe', selected: false },
-    { id: '3', initials: 'JS', name: 'Jane Smith', selected: false },
-    { id: '4', initials: 'MJ', name: 'Michael Jackson', selected: false },
-    { id: '5', initials: 'LJ', name: 'LeBron James', selected: false },
-    { id: '6', initials: 'CR', name: 'Cristiano Ronaldo', selected: false },
-    { id: '7', initials: 'LM', name: 'Lionel Messi', selected: false },
-    { id: '8', initials: 'NJ', name: 'Neymar Jr', selected: false },
-    { id: '9', initials: 'KM', name: 'Kylian Mbappé', selected: false },
-    { id: '10', initials: 'EH', name: 'Erling Haaland', selected: false },
-    { id: '11', initials: 'VM', name: 'Virgil van Dijk', selected: false },
-    { id: '12', initials: 'KDB', name: 'Kevin De Bruyne', selected: false },
-  ]);
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [playerSelectorVisible, setPlayerSelectorVisible] = useState(false);
 
   // Reset state when modal opens
   useEffect(() => {
@@ -95,7 +84,7 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
       setIsCustomSize(false);
       setCustomSize('');
       setSelectedFormation(null);
-      setPlayers(prev => prev.map(p => ({ ...p, selected: false, position: undefined })));
+      setPlayers([]);
       
       // Animate in
       opacity.value = withTiming(1, { duration: 300 });
@@ -128,7 +117,7 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
       name: teamName,
       size: teamSize,
       formation: selectedFormation,
-      players: players.filter(p => p.selected || p.position),
+      players: players,
     };
 
     onCreateTeam(teamData);
@@ -136,12 +125,31 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
   };
 
   const canCreate = () => {
-    const selectedCount = players.filter(p => p.selected || p.position).length;
-    return teamName.trim().length > 0 && selectedCount >= teamSize;
+    return teamName.trim().length > 0 && players.length >= teamSize;
+  };
+
+  const handlePlayersUpdate = (updatedPlayers: Player[]) => {
+    setPlayers(updatedPlayers);
+  };
+
+  const getPositionColor = (position: string) => {
+    switch (position) {
+      case 'GK': return '#6366f1';
+      case 'LB':
+      case 'CB':
+      case 'RB': return '#10b981';
+      case 'CDM':
+      case 'CM':
+      case 'CAM': return '#f59e0b';
+      case 'LW':
+      case 'ST':
+      case 'RW': return '#ef4444';
+      default: return '#3b82f6';
+    }
   };
 
   // Calculate selected players count
-  const selectedPlayersCount = players.filter(p => p.selected || p.position).length;
+  const selectedPlayersCount = players.length;
 
   if (!visible) return null;
 
@@ -186,20 +194,52 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
                 />
               </View>
 
-              {/* Player Selection - Now moved above Team Size */}
+              {/* Player Selection Button */}
               <View style={styles.section}>
-                <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionTitle}>Players selected: {selectedPlayersCount}</Text>
-                </View>
-                <PlayerBench
-                  players={players}
-                  setPlayers={setPlayers}
-                  teamSize={teamSize}
-                  tacticsMode={false}
-                />
+                <Text style={styles.sectionTitle}>Players selected: {selectedPlayersCount}</Text>
+                
+                <TouchableOpacity
+                  style={styles.playerSelectorButton}
+                  onPress={() => setPlayerSelectorVisible(true)}
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.playerSelectorContent}>
+                    <View style={styles.playerSelectorLeft}>
+                      <Plus size={20} color="#3b82f6" />
+                      <Text style={styles.playerSelectorText}>
+                        {selectedPlayersCount === 0 ? 'Select players' : `${selectedPlayersCount} players selected`}
+                      </Text>
+                    </View>
+                    <ChevronRight size={20} color="#9ca3af" />
+                  </View>
+                </TouchableOpacity>
+
+                {/* Selected Players Preview */}
+                {selectedPlayersCount > 0 && (
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={styles.selectedPlayersPreview}
+                    contentContainerStyle={styles.selectedPlayersContent}
+                  >
+                    {players.map((player) => (
+                      <View key={player.id} style={styles.selectedPlayerItem}>
+                        <View style={[
+                          styles.selectedPlayerAvatar,
+                          { backgroundColor: getPositionColor(player.preferredPosition) }
+                        ]}>
+                          <Text style={styles.selectedPlayerInitials}>{player.initials}</Text>
+                        </View>
+                        <Text style={styles.selectedPlayerName} numberOfLines={1}>
+                          {player.name.split(' ')[0]}
+                        </Text>
+                      </View>
+                    ))}
+                  </ScrollView>
+                )}
               </View>
 
-              {/* Team Size Selector - Now moved below Player Selection */}
+              {/* Team Size Selector */}
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Team Size</Text>
                 <View style={styles.componentWrapper}>
@@ -252,6 +292,14 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
           </Animated.View>
         </View>
       </Animated.View>
+
+      {/* Player Selector Modal */}
+      <PlayerSelectorModal
+        visible={playerSelectorVisible}
+        onClose={() => setPlayerSelectorVisible(false)}
+        players={players}
+        onPlayersUpdate={handlePlayersUpdate}
+      />
     </Modal>
   );
 }
@@ -319,12 +367,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 16,
   },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
@@ -339,6 +381,58 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderWidth: 1,
     borderColor: '#374151',
+  },
+  playerSelectorButton: {
+    backgroundColor: '#0f1115',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#374151',
+    marginBottom: 16,
+  },
+  playerSelectorContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+  },
+  playerSelectorLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  playerSelectorText: {
+    color: '#ffffff',
+    fontSize: 16,
+    marginLeft: 12,
+  },
+  selectedPlayersPreview: {
+    maxHeight: 100,
+  },
+  selectedPlayersContent: {
+    paddingBottom: 8,
+  },
+  selectedPlayerItem: {
+    alignItems: 'center',
+    marginRight: 16,
+    width: 60,
+  },
+  selectedPlayerAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
+  },
+  selectedPlayerInitials: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  selectedPlayerName: {
+    color: '#9ca3af',
+    fontSize: 12,
+    textAlign: 'center',
   },
   componentWrapper: {
     backgroundColor: '#0f1115',
