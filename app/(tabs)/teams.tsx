@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { Plus } from 'lucide-react-native';
+import CreateTeamModal from '@/components/CreateTeam/CreateTeamModal';
 
 // Mock team data - replace with your actual team data source
 const mockTeams = [
@@ -52,9 +53,27 @@ const mockTeams = [
 ];
 
 export default function TeamsScreen() {
+  const [createTeamModalVisible, setCreateTeamModalVisible] = useState(false);
+  const [teams, setTeams] = useState(mockTeams);
+
   const handleCreateTeam = () => {
-    // Navigate to create team screen or show modal
-    console.log('Create team pressed');
+    setCreateTeamModalVisible(true);
+  };
+
+  const handleTeamCreated = (teamData: any) => {
+    // Generate a new team based on the created data
+    const newTeam = {
+      id: Date.now().toString(),
+      name: teamData.name,
+      members: teamData.players.length,
+      wins: 0,
+      losses: 0,
+      avatar: teamData.name.split(' ').map((word: string) => word[0]).join('').toUpperCase().slice(0, 2),
+      color: '#8b5cf6', // Default purple color for new teams
+    };
+
+    setTeams(prev => [newTeam, ...prev]);
+    console.log('Team created:', teamData);
   };
 
   const handleTeamPress = (teamId: string) => {
@@ -118,8 +137,15 @@ export default function TeamsScreen() {
         contentContainerStyle={styles.teamsContent}
         showsVerticalScrollIndicator={false}
       >
-        {mockTeams.map(renderTeamCard)}
+        {teams.map(renderTeamCard)}
       </ScrollView>
+
+      {/* Create Team Modal */}
+      <CreateTeamModal
+        visible={createTeamModalVisible}
+        onClose={() => setCreateTeamModalVisible(false)}
+        onCreateTeam={handleTeamCreated}
+      />
     </View>
   );
 }
