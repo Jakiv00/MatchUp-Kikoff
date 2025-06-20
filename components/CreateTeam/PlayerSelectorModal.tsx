@@ -36,7 +36,7 @@ interface PlayerSelectorModalProps {
   onPlayersUpdate: (players: Player[]) => void;
 }
 
-// Extended player data with preferred positions - More comprehensive list
+// Extended player data with preferred positions
 const allPlayers: Player[] = [
   { id: '1', initials: 'AE', name: 'Ahmet Eren', selected: false, preferredPosition: 'ST' },
   { id: '2', initials: 'JD', name: 'John Doe', selected: false, preferredPosition: 'GK' },
@@ -58,16 +58,6 @@ const allPlayers: Player[] = [
   { id: '18', initials: 'AL', name: 'Alex Lee', selected: false, preferredPosition: 'CB' },
   { id: '19', initials: 'MG', name: 'Maria Garcia', selected: false, preferredPosition: 'CM' },
   { id: '20', initials: 'JW', name: 'James Wilson', selected: false, preferredPosition: 'RW' },
-  { id: '21', initials: 'KA', name: 'Kevin Anderson', selected: false, preferredPosition: 'LB' },
-  { id: '22', initials: 'LT', name: 'Lisa Taylor', selected: false, preferredPosition: 'RB' },
-  { id: '23', initials: 'BM', name: 'Brian Miller', selected: false, preferredPosition: 'CDM' },
-  { id: '24', initials: 'AS', name: 'Anna Scott', selected: false, preferredPosition: 'CAM' },
-  { id: '25', initials: 'TH', name: 'Tom Harris', selected: false, preferredPosition: 'LW' },
-  { id: '26', initials: 'JC', name: 'Jessica Clark', selected: false, preferredPosition: 'RW' },
-  { id: '27', initials: 'RL', name: 'Robert Lewis', selected: false, preferredPosition: 'ST' },
-  { id: '28', initials: 'MW', name: 'Michelle White', selected: false, preferredPosition: 'GK' },
-  { id: '29', initials: 'DH', name: 'Daniel Hall', selected: false, preferredPosition: 'CB' },
-  { id: '30', initials: 'NK', name: 'Nicole King', selected: false, preferredPosition: 'CM' },
 ];
 
 export default function PlayerSelectorModal({ 
@@ -86,8 +76,6 @@ export default function PlayerSelectorModal({
   // Initialize local players with current selection state
   useEffect(() => {
     if (visible) {
-      console.log('PlayerSelectorModal opened, initializing with players:', players.length);
-      
       const updatedPlayers = allPlayers.map(player => {
         const existingPlayer = players.find(p => p.id === player.id);
         return {
@@ -96,8 +84,6 @@ export default function PlayerSelectorModal({
           position: existingPlayer?.position,
         };
       });
-      
-      console.log('Updated players for modal:', updatedPlayers.length);
       setLocalPlayers(updatedPlayers);
       setSearchQuery('');
       
@@ -133,8 +119,6 @@ export default function PlayerSelectorModal({
     player.preferredPosition.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  console.log('Filtered players:', filteredPlayers.length, 'Search query:', searchQuery);
-
   const getPositionColor = (position: string) => {
     switch (position) {
       case 'GK': return '#6366f1';
@@ -152,7 +136,6 @@ export default function PlayerSelectorModal({
   };
 
   const togglePlayerSelection = (playerId: string) => {
-    console.log('Toggling player selection for:', playerId);
     setLocalPlayers(prev => 
       prev.map(player => 
         player.id === playerId 
@@ -165,7 +148,6 @@ export default function PlayerSelectorModal({
   const handleSave = () => {
     // Update the parent component with selected players
     const selectedPlayers = localPlayers.filter(p => p.selected);
-    console.log('Saving selected players:', selectedPlayers.length);
     onPlayersUpdate(selectedPlayers);
     onClose();
   };
@@ -219,59 +201,56 @@ export default function PlayerSelectorModal({
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.playersContent}
             >
-              {filteredPlayers.length > 0 ? (
-                filteredPlayers.map((player) => (
-                  <TouchableOpacity
-                    key={player.id}
-                    style={[
-                      styles.playerItem,
-                      player.selected && styles.selectedPlayerItem
-                    ]}
-                    onPress={() => togglePlayerSelection(player.id)}
-                    activeOpacity={0.7}
-                  >
-                    {/* Player Avatar */}
-                    <View style={[
-                      styles.playerAvatar,
-                      { backgroundColor: getPositionColor(player.preferredPosition) }
-                    ]}>
-                      <Text style={styles.playerInitials}>{player.initials}</Text>
-                    </View>
+              {filteredPlayers.map((player) => (
+                <TouchableOpacity
+                  key={player.id}
+                  style={[
+                    styles.playerItem,
+                    player.selected && styles.selectedPlayerItem
+                  ]}
+                  onPress={() => togglePlayerSelection(player.id)}
+                  activeOpacity={0.7}
+                >
+                  {/* Player Avatar */}
+                  <View style={[
+                    styles.playerAvatar,
+                    { backgroundColor: getPositionColor(player.preferredPosition) }
+                  ]}>
+                    <Text style={styles.playerInitials}>{player.initials}</Text>
+                  </View>
 
-                    {/* Player Info */}
-                    <View style={styles.playerInfo}>
-                      <Text style={styles.playerName}>{player.name}</Text>
-                      <Text style={styles.playerPosition}>
-                        Preferred: {player.preferredPosition}
-                      </Text>
-                    </View>
+                  {/* Player Info */}
+                  <View style={styles.playerInfo}>
+                    <Text style={styles.playerName}>{player.name}</Text>
+                    <Text style={styles.playerPosition}>
+                      Preferred: {player.preferredPosition}
+                    </Text>
+                  </View>
 
-                    {/* Position Badge */}
-                    <View style={[
-                      styles.positionBadge,
-                      { backgroundColor: getPositionColor(player.preferredPosition) }
-                    ]}>
-                      <Text style={styles.positionText}>{player.preferredPosition}</Text>
-                    </View>
+                  {/* Position Badge */}
+                  <View style={[
+                    styles.positionBadge,
+                    { backgroundColor: getPositionColor(player.preferredPosition) }
+                  ]}>
+                    <Text style={styles.positionText}>{player.preferredPosition}</Text>
+                  </View>
 
-                    {/* Selection Indicator */}
-                    <View style={[
-                      styles.selectionIndicator,
-                      player.selected && styles.selectedIndicator
-                    ]}>
-                      {player.selected && (
-                        <Check size={16} color="#ffffff" />
-                      )}
-                    </View>
-                  </TouchableOpacity>
-                ))
-              ) : (
+                  {/* Selection Indicator */}
+                  <View style={[
+                    styles.selectionIndicator,
+                    player.selected && styles.selectedIndicator
+                  ]}>
+                    {player.selected && (
+                      <Check size={16} color="#ffffff" />
+                    )}
+                  </View>
+                </TouchableOpacity>
+              ))}
+
+              {filteredPlayers.length === 0 && (
                 <View style={styles.emptyState}>
                   <Text style={styles.emptyStateText}>
-                    {searchQuery ? `No players found matching "${searchQuery}"` : 'No players available'}
-                  </Text>
-                  <Text style={styles.emptyStateSubtext}>
-                    {localPlayers.length === 0 ? 'Loading players...' : 'Try a different search term'}
+                    No players found matching "{searchQuery}"
                   </Text>
                 </View>
               )}
@@ -461,12 +440,6 @@ const styles = StyleSheet.create({
   emptyStateText: {
     fontSize: 16,
     color: '#9ca3af',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  emptyStateSubtext: {
-    fontSize: 14,
-    color: '#6b7280',
     textAlign: 'center',
   },
   footer: {
