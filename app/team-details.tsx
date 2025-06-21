@@ -16,7 +16,7 @@ const mockTeamData = {
     losses: 2,
     avatar: 'TB',
     color: '#3b82f6',
-    isLeader: true,
+    isLeader: true, // User is the leader of this team
     teamSize: 11,
     formation: {
       id: '11-1',
@@ -58,7 +58,7 @@ const mockTeamData = {
     losses: 4,
     avatar: 'FD',
     color: '#ef4444',
-    isLeader: false,
+    isLeader: false, // User is not the leader of this team
     teamSize: 7,
     formation: {
       id: '7-1',
