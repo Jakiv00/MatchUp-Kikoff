@@ -14,7 +14,6 @@ const mockTeams = [
     losses: 2,
     avatar: 'TB',
     color: '#3b82f6',
-    isLeader: true, // User is the leader of this team
   },
   {
     id: '2',
@@ -24,7 +23,6 @@ const mockTeams = [
     losses: 4,
     avatar: 'FD',
     color: '#ef4444',
-    isLeader: false, // User is not the leader
   },
   {
     id: '3',
@@ -34,7 +32,6 @@ const mockTeams = [
     losses: 1,
     avatar: 'SE',
     color: '#10b981',
-    isLeader: false,
   },
   {
     id: '4',
@@ -44,7 +41,6 @@ const mockTeams = [
     losses: 5,
     avatar: 'LW',
     color: '#f59e0b',
-    isLeader: false,
   },
   {
     id: '5',
@@ -54,7 +50,6 @@ const mockTeams = [
     losses: 3,
     avatar: 'IP',
     color: '#6366f1',
-    isLeader: false,
   },
 ];
 
@@ -76,10 +71,8 @@ export default function TeamsScreen() {
       losses: 0,
       avatar: teamData.name.split(' ').map((word: string) => word[0]).join('').toUpperCase().slice(0, 2),
       color: '#8b5cf6', // Default purple color for new teams
-      isLeader: true, // User is always the leader of teams they create
     };
 
-    // Add the new team to the beginning of the list
     setTeams(prev => [newTeam, ...prev]);
     console.log('Team created:', teamData);
   };
@@ -104,14 +97,7 @@ export default function TeamsScreen() {
 
         {/* Team Info */}
         <View style={styles.teamInfo}>
-          <View style={styles.teamNameContainer}>
-            <Text style={styles.teamName}>{team.name}</Text>
-            {team.isLeader && (
-              <View style={styles.leaderBadge}>
-                <Text style={styles.leaderBadgeText}>Leader</Text>
-              </View>
-            )}
-          </View>
+          <Text style={styles.teamName}>{team.name}</Text>
           <Text style={styles.teamMembers}>{team.members} members</Text>
         </View>
 
@@ -254,27 +240,11 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 16,
   },
-  teamNameContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
   teamName: {
     fontSize: 18,
     fontWeight: '600',
     color: '#ffffff',
-    marginRight: 8,
-  },
-  leaderBadge: {
-    backgroundColor: '#3b82f6',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
-  },
-  leaderBadgeText: {
-    color: '#ffffff',
-    fontSize: 10,
-    fontWeight: '700',
+    marginBottom: 4,
   },
   teamMembers: {
     fontSize: 14,
