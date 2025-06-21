@@ -8,6 +8,7 @@ import {
   ScrollView,
   TextInput,
   Dimensions,
+  Platform,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -196,65 +197,68 @@ export default function PlayerSelectorModal({
             </View>
 
             {/* Players List */}
-            <ScrollView 
-              style={styles.playersList}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.playersContent}
-            >
-              {filteredPlayers.map((player) => (
-                <TouchableOpacity
-                  key={player.id}
-                  style={[
-                    styles.playerItem,
-                    player.selected && styles.selectedPlayerItem
-                  ]}
-                  onPress={() => togglePlayerSelection(player.id)}
-                  activeOpacity={0.7}
-                >
-                  {/* Player Avatar */}
-                  <View style={[
-                    styles.playerAvatar,
-                    { backgroundColor: getPositionColor(player.preferredPosition) }
-                  ]}>
-                    <Text style={styles.playerInitials}>{player.initials}</Text>
-                  </View>
+            <View style={styles.playersListContainer}>
+              <ScrollView 
+                style={styles.playersList}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.playersContent}
+                bounces={false}
+              >
+                {filteredPlayers.map((player) => (
+                  <TouchableOpacity
+                    key={player.id}
+                    style={[
+                      styles.playerItem,
+                      player.selected && styles.selectedPlayerItem
+                    ]}
+                    onPress={() => togglePlayerSelection(player.id)}
+                    activeOpacity={0.7}
+                  >
+                    {/* Player Avatar */}
+                    <View style={[
+                      styles.playerAvatar,
+                      { backgroundColor: getPositionColor(player.preferredPosition) }
+                    ]}>
+                      <Text style={styles.playerInitials}>{player.initials}</Text>
+                    </View>
 
-                  {/* Player Info */}
-                  <View style={styles.playerInfo}>
-                    <Text style={styles.playerName}>{player.name}</Text>
-                    <Text style={styles.playerPosition}>
-                      Preferred: {player.preferredPosition}
+                    {/* Player Info */}
+                    <View style={styles.playerInfo}>
+                      <Text style={styles.playerName}>{player.name}</Text>
+                      <Text style={styles.playerPosition}>
+                        Preferred: {player.preferredPosition}
+                      </Text>
+                    </View>
+
+                    {/* Position Badge */}
+                    <View style={[
+                      styles.positionBadge,
+                      { backgroundColor: getPositionColor(player.preferredPosition) }
+                    ]}>
+                      <Text style={styles.positionText}>{player.preferredPosition}</Text>
+                    </View>
+
+                    {/* Selection Indicator */}
+                    <View style={[
+                      styles.selectionIndicator,
+                      player.selected && styles.selectedIndicator
+                    ]}>
+                      {player.selected && (
+                        <Check size={16} color="#ffffff" />
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                ))}
+
+                {filteredPlayers.length === 0 && (
+                  <View style={styles.emptyState}>
+                    <Text style={styles.emptyStateText}>
+                      No players found matching "{searchQuery}"
                     </Text>
                   </View>
-
-                  {/* Position Badge */}
-                  <View style={[
-                    styles.positionBadge,
-                    { backgroundColor: getPositionColor(player.preferredPosition) }
-                  ]}>
-                    <Text style={styles.positionText}>{player.preferredPosition}</Text>
-                  </View>
-
-                  {/* Selection Indicator */}
-                  <View style={[
-                    styles.selectionIndicator,
-                    player.selected && styles.selectedIndicator
-                  ]}>
-                    {player.selected && (
-                      <Check size={16} color="#ffffff" />
-                    )}
-                  </View>
-                </TouchableOpacity>
-              ))}
-
-              {filteredPlayers.length === 0 && (
-                <View style={styles.emptyState}>
-                  <Text style={styles.emptyStateText}>
-                    No players found matching "{searchQuery}"
-                  </Text>
-                </View>
-              )}
-            </ScrollView>
+                )}
+              </ScrollView>
+            </View>
 
             {/* Footer */}
             <View style={styles.footer}>
@@ -291,13 +295,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
+    paddingVertical: Platform.OS === 'ios' ? 40 : 20,
   },
   modalContainer: {
     backgroundColor: '#1a1d23',
     borderRadius: 20,
-    maxWidth: 400,
     width: '100%',
-    maxHeight: SCREEN_HEIGHT * 0.85,
+    maxWidth: 400,
+    height: Platform.OS === 'ios' ? SCREEN_HEIGHT * 0.8 : SCREEN_HEIGHT * 0.85,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -363,9 +368,12 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     textAlign: 'center',
   },
+  playersListContainer: {
+    flex: 1,
+    minHeight: 0,
+  },
   playersList: {
     flex: 1,
-    maxHeight: SCREEN_HEIGHT * 0.5,
   },
   playersContent: {
     paddingVertical: 8,
