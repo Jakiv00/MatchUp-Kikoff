@@ -16,7 +16,7 @@ const mockTeamData = {
     losses: 2,
     avatar: 'TB',
     color: '#3b82f6',
-    isLeader: true,
+    isLeader: true, // User is the leader of this team
     teamSize: 11,
     formation: {
       id: '11-1',
@@ -58,7 +58,7 @@ const mockTeamData = {
     losses: 4,
     avatar: 'FD',
     color: '#ef4444',
-    isLeader: false,
+    isLeader: false, // User is NOT the leader of this team
     teamSize: 7,
     formation: {
       id: '7-1',
@@ -86,6 +86,45 @@ const mockTeamData = {
       { id: '1', initials: 'AE', name: 'Ahmet Eren', selected: true, preferredPosition: 'ST' },
       { id: '4', initials: 'MJ', name: 'Michael Jackson', selected: true, preferredPosition: 'CM' },
     ]
+  },
+  '3': {
+    id: '3',
+    name: 'Storm Eagles',
+    members: 14,
+    wins: 9,
+    losses: 1,
+    avatar: 'SE',
+    color: '#10b981',
+    isLeader: true, // User is the leader of this team
+    teamSize: 11,
+    formation: null,
+    players: []
+  },
+  '4': {
+    id: '4',
+    name: 'Lightning Wolves',
+    members: 11,
+    wins: 5,
+    losses: 5,
+    avatar: 'LW',
+    color: '#f59e0b',
+    isLeader: false, // User is NOT the leader of this team
+    teamSize: 7,
+    formation: null,
+    players: []
+  },
+  '5': {
+    id: '5',
+    name: 'Ice Panthers',
+    members: 13,
+    wins: 7,
+    losses: 3,
+    avatar: 'IP',
+    color: '#6366f1',
+    isLeader: false, // User is NOT the leader of this team
+    teamSize: 11,
+    formation: null,
+    players: []
   },
 };
 
@@ -266,6 +305,7 @@ export default function TeamDetailsScreen() {
         
         <Text style={styles.headerTitle}>Team Details</Text>
         
+        {/* Show edit button only if user is the team leader */}
         {teamData.isLeader ? (
           <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
             <Edit size={24} color="#3b82f6" />
@@ -324,7 +364,7 @@ export default function TeamDetailsScreen() {
         {renderPlayersList()}
       </ScrollView>
 
-      {/* Edit Team Modal */}
+      {/* Edit Team Modal - Only show if user is the team leader */}
       {teamData.isLeader && (
         <EditTeamModal
           visible={editModalVisible}
