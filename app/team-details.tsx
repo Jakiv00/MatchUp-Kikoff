@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, CreditCard as Edit, Users, Trophy, Target } from 'lucide-react-native';
+import { ArrowLeft, Edit, Users, Trophy, Target } from 'lucide-react-native';
 import EditTeamModal from '@/components/CreateTeam/EditTeamModal';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -16,7 +16,7 @@ const mockTeamData = {
     losses: 2,
     avatar: 'TB',
     color: '#3b82f6',
-    isLeader: true, // User is the leader of this team
+    isLeader: true,
     teamSize: 11,
     formation: {
       id: '11-1',
@@ -58,7 +58,7 @@ const mockTeamData = {
     losses: 4,
     avatar: 'FD',
     color: '#ef4444',
-    isLeader: false, // User is not the leader of this team
+    isLeader: false,
     teamSize: 7,
     formation: {
       id: '7-1',
