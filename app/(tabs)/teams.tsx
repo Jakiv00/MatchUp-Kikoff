@@ -67,9 +67,12 @@ export default function TeamsScreen() {
   };
 
   const handleTeamCreated = (teamData: any) => {
-    // Generate a new team based on the created data
+    // Generate a new team ID
+    const newTeamId = (Date.now()).toString();
+    
+    // Create the new team with full data structure
     const newTeam = {
-      id: Date.now().toString(),
+      id: newTeamId,
       name: teamData.name,
       members: teamData.players.length,
       wins: 0,
@@ -79,8 +82,40 @@ export default function TeamsScreen() {
       isLeader: true, // User is always the leader of teams they create
     };
 
+    // Add the new team to the teams list
     setTeams(prev => [newTeam, ...prev]);
+    
+    // Also add the team to the mock data for team details
+    // This would normally be handled by your backend/state management
+    updateTeamDetailsData(newTeamId, teamData);
+    
     console.log('Team created:', teamData);
+  };
+
+  // Function to update the team details data (simulating backend update)
+  const updateTeamDetailsData = (teamId: string, teamData: any) => {
+    // This would normally be an API call or state management update
+    // For now, we'll store it in a way that team-details.tsx can access it
+    
+    // You could use AsyncStorage, Context, or a state management library
+    // For this example, we'll use a simple approach
+    const newTeamDetails = {
+      id: teamId,
+      name: teamData.name,
+      members: teamData.players.length,
+      wins: 0,
+      losses: 0,
+      avatar: teamData.name.split(' ').map((word: string) => word[0]).join('').toUpperCase().slice(0, 2),
+      color: '#8b5cf6',
+      isLeader: true,
+      teamSize: teamData.size,
+      formation: teamData.formation,
+      players: teamData.players || []
+    };
+    
+    // Store in global state or pass to team details
+    // For now, we'll log it - in a real app, this would update your data store
+    console.log('New team details data:', newTeamDetails);
   };
 
   const handleTeamPress = (teamId: string) => {

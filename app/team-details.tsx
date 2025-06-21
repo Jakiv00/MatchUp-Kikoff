@@ -97,8 +97,39 @@ const mockTeamData = {
     color: '#10b981',
     isLeader: true, // User is the leader of this team
     teamSize: 11,
-    formation: null,
-    players: []
+    formation: {
+      id: '11-2',
+      name: '4-3-3',
+      positions: [
+        { id: 'gk', name: 'GK', x: 50, y: 95, filled: true, playerId: '2', isGoalkeeper: true },
+        { id: 'lb', name: 'LB', x: 20, y: 70, filled: true, playerId: '13' },
+        { id: 'lcb', name: 'LCB', x: 40, y: 70, filled: true, playerId: '3' },
+        { id: 'rcb', name: 'RCB', x: 60, y: 70, filled: true, playerId: '11' },
+        { id: 'rb', name: 'RB', x: 80, y: 70, filled: true, playerId: '14' },
+        { id: 'cdm', name: 'CDM', x: 50, y: 55, filled: true, playerId: '15' },
+        { id: 'lcm', name: 'LCM', x: 30, y: 45, filled: true, playerId: '4' },
+        { id: 'rcm', name: 'RCM', x: 70, y: 45, filled: true, playerId: '12' },
+        { id: 'lw', name: 'LW', x: 20, y: 30, filled: true, playerId: '5' },
+        { id: 'st', name: 'ST', x: 50, y: 25, filled: true, playerId: '6' },
+        { id: 'rw', name: 'RW', x: 80, y: 30, filled: true, playerId: '7' },
+      ]
+    },
+    players: [
+      { id: '2', initials: 'JD', name: 'John Doe', selected: true, preferredPosition: 'GK', position: 'GK' },
+      { id: '3', initials: 'JS', name: 'Jane Smith', selected: true, preferredPosition: 'CB', position: 'LCB' },
+      { id: '4', initials: 'MJ', name: 'Michael Jackson', selected: true, preferredPosition: 'CM', position: 'LCM' },
+      { id: '5', initials: 'LJ', name: 'LeBron James', selected: true, preferredPosition: 'LW', position: 'LW' },
+      { id: '6', initials: 'CR', name: 'Cristiano Ronaldo', selected: true, preferredPosition: 'ST', position: 'ST' },
+      { id: '7', initials: 'LM', name: 'Lionel Messi', selected: true, preferredPosition: 'RW', position: 'RW' },
+      { id: '11', initials: 'VM', name: 'Virgil van Dijk', selected: true, preferredPosition: 'CB', position: 'RCB' },
+      { id: '12', initials: 'KDB', name: 'Kevin De Bruyne', selected: true, preferredPosition: 'CM', position: 'RCM' },
+      { id: '13', initials: 'MR', name: 'Marcus Rodriguez', selected: true, preferredPosition: 'LB', position: 'LB' },
+      { id: '14', initials: 'SJ', name: 'Sarah Johnson', selected: true, preferredPosition: 'RB', position: 'RB' },
+      { id: '15', initials: 'DW', name: 'David Wilson', selected: true, preferredPosition: 'CDM', position: 'CDM' },
+      { id: '1', initials: 'AE', name: 'Ahmet Eren', selected: true, preferredPosition: 'ST' },
+      { id: '9', initials: 'KM', name: 'Kylian Mbappé', selected: true, preferredPosition: 'ST' },
+      { id: '16', initials: 'EL', name: 'Emma Lopez', selected: true, preferredPosition: 'CAM' },
+    ]
   },
   '4': {
     id: '4',
@@ -110,8 +141,33 @@ const mockTeamData = {
     color: '#f59e0b',
     isLeader: false, // User is NOT the leader of this team
     teamSize: 7,
-    formation: null,
-    players: []
+    formation: {
+      id: '7-2',
+      name: '4-2-1',
+      positions: [
+        { id: 'gk', name: 'GK', x: 50, y: 95, filled: true, playerId: '2', isGoalkeeper: true },
+        { id: 'lb', name: 'LB', x: 20, y: 70, filled: true, playerId: '13' },
+        { id: 'lcb', name: 'LCB', x: 40, y: 70, filled: true, playerId: '3' },
+        { id: 'rcb', name: 'RCB', x: 60, y: 70, filled: true, playerId: '11' },
+        { id: 'rb', name: 'RB', x: 80, y: 70, filled: true, playerId: '14' },
+        { id: 'lm', name: 'LM', x: 30, y: 50, filled: true, playerId: '5' },
+        { id: 'rm', name: 'RM', x: 70, y: 50, filled: true, playerId: '7' },
+        { id: 'st', name: 'ST', x: 50, y: 30, filled: true, playerId: '6' },
+      ]
+    },
+    players: [
+      { id: '2', initials: 'JD', name: 'John Doe', selected: true, preferredPosition: 'GK', position: 'GK' },
+      { id: '3', initials: 'JS', name: 'Jane Smith', selected: true, preferredPosition: 'CB', position: 'LCB' },
+      { id: '5', initials: 'LJ', name: 'LeBron James', selected: true, preferredPosition: 'LW', position: 'LM' },
+      { id: '6', initials: 'CR', name: 'Cristiano Ronaldo', selected: true, preferredPosition: 'ST', position: 'ST' },
+      { id: '7', initials: 'LM', name: 'Lionel Messi', selected: true, preferredPosition: 'RW', position: 'RM' },
+      { id: '11', initials: 'VM', name: 'Virgil van Dijk', selected: true, preferredPosition: 'CB', position: 'RCB' },
+      { id: '13', initials: 'MR', name: 'Marcus Rodriguez', selected: true, preferredPosition: 'LB', position: 'LB' },
+      { id: '14', initials: 'SJ', name: 'Sarah Johnson', selected: true, preferredPosition: 'RB', position: 'RB' },
+      { id: '1', initials: 'AE', name: 'Ahmet Eren', selected: true, preferredPosition: 'ST' },
+      { id: '4', initials: 'MJ', name: 'Michael Jackson', selected: true, preferredPosition: 'CM' },
+      { id: '9', initials: 'KM', name: 'Kylian Mbappé', selected: true, preferredPosition: 'ST' },
+    ]
   },
   '5': {
     id: '5',
@@ -123,16 +179,58 @@ const mockTeamData = {
     color: '#6366f1',
     isLeader: false, // User is NOT the leader of this team
     teamSize: 11,
-    formation: null,
-    players: []
+    formation: {
+      id: '11-1',
+      name: '4-4-2',
+      positions: [
+        { id: 'gk', name: 'GK', x: 50, y: 95, filled: true, playerId: '2', isGoalkeeper: true },
+        { id: 'lb', name: 'LB', x: 20, y: 70, filled: true, playerId: '13' },
+        { id: 'lcb', name: 'LCB', x: 40, y: 70, filled: true, playerId: '3' },
+        { id: 'rcb', name: 'RCB', x: 60, y: 70, filled: true, playerId: '11' },
+        { id: 'rb', name: 'RB', x: 80, y: 70, filled: true, playerId: '14' },
+        { id: 'lm', name: 'LM', x: 20, y: 50, filled: true, playerId: '5' },
+        { id: 'lcm', name: 'LCM', x: 40, y: 50, filled: true, playerId: '4' },
+        { id: 'rcm', name: 'RCM', x: 60, y: 50, filled: true, playerId: '12' },
+        { id: 'rm', name: 'RM', x: 80, y: 50, filled: true, playerId: '7' },
+        { id: 'ls', name: 'LS', x: 35, y: 30, filled: true, playerId: '6' },
+        { id: 'rs', name: 'RS', x: 65, y: 30, filled: true, playerId: '9' },
+      ]
+    },
+    players: [
+      { id: '2', initials: 'JD', name: 'John Doe', selected: true, preferredPosition: 'GK', position: 'GK' },
+      { id: '3', initials: 'JS', name: 'Jane Smith', selected: true, preferredPosition: 'CB', position: 'LCB' },
+      { id: '4', initials: 'MJ', name: 'Michael Jackson', selected: true, preferredPosition: 'CM', position: 'LCM' },
+      { id: '5', initials: 'LJ', name: 'LeBron James', selected: true, preferredPosition: 'LW', position: 'LM' },
+      { id: '6', initials: 'CR', name: 'Cristiano Ronaldo', selected: true, preferredPosition: 'ST', position: 'LS' },
+      { id: '7', initials: 'LM', name: 'Lionel Messi', selected: true, preferredPosition: 'RW', position: 'RM' },
+      { id: '9', initials: 'KM', name: 'Kylian Mbappé', selected: true, preferredPosition: 'ST', position: 'RS' },
+      { id: '11', initials: 'VM', name: 'Virgil van Dijk', selected: true, preferredPosition: 'CB', position: 'RCB' },
+      { id: '12', initials: 'KDB', name: 'Kevin De Bruyne', selected: true, preferredPosition: 'CM', position: 'RCM' },
+      { id: '13', initials: 'MR', name: 'Marcus Rodriguez', selected: true, preferredPosition: 'LB', position: 'LB' },
+      { id: '14', initials: 'SJ', name: 'Sarah Johnson', selected: true, preferredPosition: 'RB', position: 'RB' },
+      { id: '1', initials: 'AE', name: 'Ahmet Eren', selected: true, preferredPosition: 'ST' },
+      { id: '16', initials: 'EL', name: 'Emma Lopez', selected: true, preferredPosition: 'CAM' },
+    ]
   },
+};
+
+// Global storage for dynamically created teams (in a real app, this would be in your state management)
+let dynamicTeamData: Record<string, any> = {};
+
+// Function to add new team data (called from teams.tsx)
+export const addTeamData = (teamId: string, teamData: any) => {
+  dynamicTeamData[teamId] = teamData;
 };
 
 export default function TeamDetailsScreen() {
   const params = useLocalSearchParams();
   const teamId = params.id as string;
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const [teamData, setTeamData] = useState(mockTeamData[teamId as keyof typeof mockTeamData]);
+  
+  // Get team data from either mock data or dynamic data
+  const [teamData, setTeamData] = useState(() => {
+    return mockTeamData[teamId as keyof typeof mockTeamData] || dynamicTeamData[teamId] || null;
+  });
 
   if (!teamData) {
     return (
@@ -164,6 +262,11 @@ export default function TeamDetailsScreen() {
       ...prev,
       ...updatedTeamData,
     }));
+    
+    // Update the dynamic data storage
+    if (dynamicTeamData[teamId]) {
+      dynamicTeamData[teamId] = { ...dynamicTeamData[teamId], ...updatedTeamData };
+    }
   };
 
   const getPositionColor = (position: string) => {
@@ -191,7 +294,16 @@ export default function TeamDetailsScreen() {
   };
 
   const renderFormationField = () => {
-    if (!teamData.formation) return null;
+    if (!teamData.formation) {
+      return (
+        <View style={styles.formationContainer}>
+          <Text style={styles.sectionTitle}>Formation: Not Set</Text>
+          <View style={styles.noFormationContainer}>
+            <Text style={styles.noFormationText}>No formation configured yet</Text>
+          </View>
+        </View>
+      );
+    }
 
     return (
       <View style={styles.formationContainer}>
@@ -243,6 +355,17 @@ export default function TeamDetailsScreen() {
   };
 
   const renderPlayersList = () => {
+    if (!teamData.players || teamData.players.length === 0) {
+      return (
+        <View style={styles.playersContainer}>
+          <Text style={styles.sectionTitle}>Squad (0 players)</Text>
+          <View style={styles.noPlayersContainer}>
+            <Text style={styles.noPlayersText}>No players added yet</Text>
+          </View>
+        </View>
+      );
+    }
+
     const positionedPlayers = teamData.players.filter(p => p.position);
     const benchPlayers = teamData.players.filter(p => !p.position);
 
@@ -508,6 +631,19 @@ const styles = StyleSheet.create({
   formationContainer: {
     marginBottom: 32,
   },
+  noFormationContainer: {
+    backgroundColor: '#1a1d23',
+    marginHorizontal: 16,
+    borderRadius: 12,
+    padding: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  noFormationText: {
+    color: '#9ca3af',
+    fontSize: 16,
+    textAlign: 'center',
+  },
   soccerField: {
     width: SCREEN_WIDTH - 64,
     height: 300,
@@ -605,6 +741,19 @@ const styles = StyleSheet.create({
   },
   playersContainer: {
     marginBottom: 32,
+  },
+  noPlayersContainer: {
+    backgroundColor: '#1a1d23',
+    marginHorizontal: 16,
+    borderRadius: 12,
+    padding: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  noPlayersText: {
+    color: '#9ca3af',
+    fontSize: 16,
+    textAlign: 'center',
   },
   playerGroup: {
     marginBottom: 24,
