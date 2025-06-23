@@ -141,6 +141,11 @@ export default function TeamSizeSelector({
 
       {/* Team Selection Buttons */}
       <View style={styles.teamSelectionContainer}>
+        {/* Fast Track Note */}
+        <View style={styles.noteContainer}>
+          <Text style={styles.fastTrackNote}>Fast track</Text>
+        </View>
+        
         <TouchableOpacity
           style={styles.teamButton}
           onPress={handleYourTeamPress}
@@ -167,6 +172,11 @@ export default function TeamSizeSelector({
             <Text style={styles.teamButtonText}>Opposing Team</Text>
           </View>
         </TouchableOpacity>
+        
+        {/* Invite Later Note */}
+        <View style={styles.noteContainer}>
+          <Text style={styles.inviteLaterNote}>You can invite later</Text>
+        </View>
       </View>
     </View>
   );
@@ -247,6 +257,22 @@ const styles = StyleSheet.create({
   teamSelectionContainer: {
     marginTop: 24,
     gap: 12,
+  },
+  noteContainer: {
+    alignItems: 'center',
+    paddingVertical: 4,
+  },
+  fastTrackNote: {
+    color: '#10b981',
+    fontSize: 14,
+    fontWeight: '600',
+    fontStyle: 'italic',
+  },
+  inviteLaterNote: {
+    color: '#9ca3af',
+    fontSize: 14,
+    fontWeight: '500',
+    fontStyle: 'italic',
   },
   teamButton: {
     backgroundColor: '#1a1d23',
