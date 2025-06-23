@@ -152,6 +152,11 @@ export default function TeamSizeSelector({
           </View>
         </TouchableOpacity>
         
+        {/* VS Text */}
+        <View style={styles.vsContainer}>
+          <Text style={styles.vsText}>vs</Text>
+        </View>
+        
         <TouchableOpacity
           style={styles.teamButton}
           onPress={handleOpposingTeamPress}
@@ -261,5 +266,17 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  vsContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+  },
+  vsText: {
+    color: '#9ca3af',
+    fontSize: 18,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 2,
   },
 });
