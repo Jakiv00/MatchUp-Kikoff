@@ -136,22 +136,6 @@ export default function PlayerSelectorModal({
     }
   };
 
-  const getPositionLabel = (position: string) => {
-    const positionLabels: Record<string, string> = {
-      'GK': 'Goalkeeper',
-      'LB': 'Left Back',
-      'CB': 'Center Back',
-      'RB': 'Right Back',
-      'CDM': 'Defensive Mid',
-      'CM': 'Center Mid',
-      'CAM': 'Attacking Mid',
-      'LW': 'Left Wing',
-      'ST': 'Striker',
-      'RW': 'Right Wing',
-    };
-    return positionLabels[position] || position;
-  };
-
   const togglePlayerSelection = (playerId: string) => {
     setLocalPlayers(prev => 
       prev.map(player => 
@@ -242,7 +226,7 @@ export default function PlayerSelectorModal({
                     <View style={styles.playerInfo}>
                       <Text style={styles.playerName}>{player.name}</Text>
                       <Text style={styles.playerPosition}>
-                        {getPositionLabel(player.preferredPosition)}
+                        Preferred: {player.preferredPosition}
                       </Text>
                     </View>
 
