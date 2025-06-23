@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions } from
 import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, CreditCard as Edit, Users, Trophy, Target } from 'lucide-react-native';
 import EditTeamModal from '@/components/CreateTeam/EditTeamModal';
+import { getDynamicTeams } from '@/app/(tabs)/teams';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -214,14 +215,6 @@ const mockTeamData = {
   },
 };
 
-// Global storage for dynamically created teams (in a real app, this would be in your state management)
-let dynamicTeamData: Record<string, any> = {};
-
-// Function to add new team data (called from teams.tsx)
-export const addTeamData = (teamId: string, teamData: any) => {
-  dynamicTeamData[teamId] = teamData;
-};
-
 export default function TeamDetailsScreen() {
   const params = useLocalSearchParams();
   const teamId = params.id as string;
@@ -229,7 +222,20 @@ export default function TeamDetailsScreen() {
   
   // Get team data from either mock data or dynamic data
   const [teamData, setTeamData] = useState(() => {
-    return mockTeamData[teamId as keyof typeof mockTeamData] || dynamicTeamData[teamId] || null;
+    // First check mock data
+    const mockTeam = mockTeamData[teamId as keyof typeof mockTeamData];
+    if (mockTeam) {
+      return mockTeam;
+    }
+    
+    // Then check dynamic teams
+    const dynamicTeams = getDynamicTeams();
+    const dynamicTeam = dynamicTeams.find(team => team.id === teamId);
+    if (dynamicTeam) {
+      return dynamicTeam;
+    }
+    
+    return null;
   });
 
   if (!teamData) {
@@ -263,9 +269,11 @@ export default function TeamDetailsScreen() {
       ...updatedTeamData,
     }));
     
-    // Update the dynamic data storage
-    if (dynamicTeamData[teamId]) {
-      dynamicTeamData[teamId] = { ...dynamicTeamData[teamId], ...updatedTeamData };
+    // Update the dynamic data storage if it's a dynamic team
+    const dynamicTeams = getDynamicTeams();
+    const teamIndex = dynamicTeams.findIndex(team => team.id === teamId);
+    if (teamIndex !== -1) {
+      dynamicTeams[teamIndex] = { ...dynamicTeams[teamIndex], ...updatedTeamData };
     }
   };
 
@@ -464,12 +472,12 @@ export default function TeamDetailsScreen() {
           <View style={styles.statsContainer}>
             <View style={styles.statCard}>
               <Trophy size={20} color="#f59e0b" />
-              <Text style={styles.statValue}>{teamData.wins}</Text>
+              <Text style={styles.statValue}>{teamData.wins || 0}</Text>
               <Text style={styles.statLabel}>Wins</Text>
             </View>
             <View style={styles.statCard}>
               <Target size={20} color="#ef4444" />
-              <Text style={styles.statValue}>{teamData.losses}</Text>
+              <Text style={styles.statValue}>{teamData.losses || 0}</Text>
               <Text style={styles.statLabel}>Losses</Text>
             </View>
             <View style={styles.statCard}>

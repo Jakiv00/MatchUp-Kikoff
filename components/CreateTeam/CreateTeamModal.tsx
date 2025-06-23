@@ -113,9 +113,16 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
   }));
 
   const handleCreateTeam = () => {
+    // Create comprehensive team data structure matching mock teams
     const teamData = {
       name: teamName,
-      size: teamSize,
+      teamSize: teamSize,
+      wins: 0, // Initialize with 0 wins
+      losses: 0, // Initialize with 0 losses
+      members: players.length,
+      avatar: teamName.split(' ').map((word: string) => word[0]).join('').toUpperCase().slice(0, 2),
+      color: '#8b5cf6', // Default purple color for new teams
+      isLeader: true, // User is always the leader of teams they create
       formation: selectedFormation,
       players: players,
     };

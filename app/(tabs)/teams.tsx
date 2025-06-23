@@ -58,6 +58,9 @@ const mockTeams = [
   },
 ];
 
+// Global storage for dynamically created teams
+let dynamicTeams: any[] = [];
+
 export default function TeamsScreen() {
   const [createTeamModalVisible, setCreateTeamModalVisible] = useState(false);
   const [teams, setTeams] = useState(mockTeams);
@@ -70,52 +73,40 @@ export default function TeamsScreen() {
     // Generate a new team ID
     const newTeamId = (Date.now()).toString();
     
-    // Create the new team with full data structure
+    // Create the new team with full data structure matching mock teams
     const newTeam = {
       id: newTeamId,
       name: teamData.name,
-      members: teamData.players.length,
-      wins: 0,
-      losses: 0,
-      avatar: teamData.name.split(' ').map((word: string) => word[0]).join('').toUpperCase().slice(0, 2),
-      color: '#8b5cf6', // Default purple color for new teams
-      isLeader: true, // User is always the leader of teams they create
+      members: teamData.members || teamData.players?.length || 0,
+      wins: teamData.wins || 0, // Ensure wins are initialized
+      losses: teamData.losses || 0, // Ensure losses are initialized
+      avatar: teamData.avatar || teamData.name.split(' ').map((word: string) => word[0]).join('').toUpperCase().slice(0, 2),
+      color: teamData.color || '#8b5cf6', // Default purple color for new teams
+      isLeader: teamData.isLeader !== undefined ? teamData.isLeader : true, // User is always the leader of teams they create
     };
 
     // Add the new team to the teams list
     setTeams(prev => [newTeam, ...prev]);
     
-    // Also add the team to the mock data for team details
-    // This would normally be handled by your backend/state management
-    updateTeamDetailsData(newTeamId, teamData);
-    
-    console.log('Team created:', teamData);
-  };
-
-  // Function to update the team details data (simulating backend update)
-  const updateTeamDetailsData = (teamId: string, teamData: any) => {
-    // This would normally be an API call or state management update
-    // For now, we'll store it in a way that team-details.tsx can access it
-    
-    // You could use AsyncStorage, Context, or a state management library
-    // For this example, we'll use a simple approach
-    const newTeamDetails = {
-      id: teamId,
+    // Store the complete team data for team details
+    const completeTeamData = {
+      id: newTeamId,
       name: teamData.name,
-      members: teamData.players.length,
-      wins: 0,
-      losses: 0,
-      avatar: teamData.name.split(' ').map((word: string) => word[0]).join('').toUpperCase().slice(0, 2),
-      color: '#8b5cf6',
+      members: teamData.members || teamData.players?.length || 0,
+      wins: teamData.wins || 0,
+      losses: teamData.losses || 0,
+      avatar: newTeam.avatar,
+      color: newTeam.color,
       isLeader: true,
-      teamSize: teamData.size,
-      formation: teamData.formation,
+      teamSize: teamData.teamSize || 11,
+      formation: teamData.formation || null,
       players: teamData.players || []
     };
     
-    // Store in global state or pass to team details
-    // For now, we'll log it - in a real app, this would update your data store
-    console.log('New team details data:', newTeamDetails);
+    // Add to dynamic teams storage
+    dynamicTeams.push(completeTeamData);
+    
+    console.log('Team created:', completeTeamData);
   };
 
   const handleTeamPress = (teamId: string) => {
@@ -199,6 +190,9 @@ export default function TeamsScreen() {
     </View>
   );
 }
+
+// Export function to get dynamic teams for team details
+export const getDynamicTeams = () => dynamicTeams;
 
 const styles = StyleSheet.create({
   container: {
