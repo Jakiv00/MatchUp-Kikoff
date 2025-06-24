@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
 import { Users, Shield } from 'lucide-react-native';
 import OpposingTeamModal from './OpposingTeamModal';
+import YourTeamModal from './YourTeamModal';
 
 interface TeamSizeSelectorProps {
   teamSize: number;
@@ -11,6 +12,7 @@ interface TeamSizeSelectorProps {
   customSize: string;
   setCustomSize: (size: string) => void;
   showTeamSelection?: boolean; // New prop to control team selection visibility
+  onTeamDataUpdate?: (teamData: any) => void; // Callback for team data updates
 }
 
 interface SelectedTeam {
@@ -18,6 +20,9 @@ interface SelectedTeam {
   name: string;
   avatar: string;
   color: string;
+  teamSize?: number;
+  formation?: any;
+  players?: any[];
 }
 
 export default function TeamSizeSelector({
@@ -27,10 +32,13 @@ export default function TeamSizeSelector({
   setIsCustomSize,
   customSize,
   setCustomSize,
-  showTeamSelection = false // Default to false (hidden)
+  showTeamSelection = false, // Default to false (hidden)
+  onTeamDataUpdate
 }: TeamSizeSelectorProps) {
   
+  const [selectedYourTeam, setSelectedYourTeam] = useState<SelectedTeam | null>(null);
   const [selectedOpposingTeam, setSelectedOpposingTeam] = useState<SelectedTeam | null>(null);
+  const [yourTeamModalVisible, setYourTeamModalVisible] = useState(false);
   const [opposingTeamModalVisible, setOpposingTeamModalVisible] = useState(false);
   
   const handleSizeSelection = (size: number) => {
@@ -64,12 +72,34 @@ export default function TeamSizeSelector({
   };
 
   const handleYourTeamPress = () => {
-    // Handle your team selection
-    console.log('Your team pressed');
+    setYourTeamModalVisible(true);
   };
 
   const handleOpposingTeamPress = () => {
     setOpposingTeamModalVisible(true);
+  };
+
+  const handleYourTeamSelect = (team: SelectedTeam) => {
+    setSelectedYourTeam(team);
+    setYourTeamModalVisible(false);
+    
+    // Autofill team data
+    if (team.teamSize) {
+      setTeamSize(team.teamSize);
+      setIsCustomSize(![5, 7, 11].includes(team.teamSize));
+      if (![5, 7, 11].includes(team.teamSize)) {
+        setCustomSize(team.teamSize.toString());
+      }
+    }
+    
+    // Pass team data to parent component for autofilling
+    if (onTeamDataUpdate) {
+      onTeamDataUpdate({
+        teamSize: team.teamSize,
+        formation: team.formation,
+        players: team.players,
+      });
+    }
   };
 
   const handleOpposingTeamSelect = (team: SelectedTeam) => {
@@ -165,13 +195,34 @@ export default function TeamSizeSelector({
           </View>
           
           <TouchableOpacity
-            style={styles.teamButton}
+            style={[
+              styles.teamButton,
+              selectedYourTeam && styles.selectedTeamButton
+            ]}
             onPress={handleYourTeamPress}
             activeOpacity={0.7}
           >
             <View style={styles.teamButtonContent}>
-              <Users size={20} color="#3b82f6" />
-              <Text style={styles.teamButtonText}>Your Team</Text>
+              {selectedYourTeam ? (
+                <>
+                  <View style={[
+                    styles.selectedTeamAvatar,
+                    { backgroundColor: selectedYourTeam.color }
+                  ]}>
+                    <Text style={styles.selectedTeamAvatarText}>
+                      {selectedYourTeam.avatar}
+                    </Text>
+                  </View>
+                  <Text style={styles.teamButtonText}>
+                    {selectedYourTeam.name}
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Users size={20} color="#3b82f6" />
+                  <Text style={styles.teamButtonText}>Select Your Team</Text>
+                </>
+              )}
             </View>
           </TouchableOpacity>
           
@@ -218,6 +269,13 @@ export default function TeamSizeSelector({
           </View>
         </View>
       )}
+
+      {/* Your Team Selection Modal */}
+      <YourTeamModal
+        visible={yourTeamModalVisible}
+        onClose={() => setYourTeamModalVisible(false)}
+        onSelectTeam={handleYourTeamSelect}
+      />
 
       {/* Opposing Team Selection Modal */}
       <OpposingTeamModal

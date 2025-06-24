@@ -79,6 +79,50 @@ export default function CreateMatchScreen() {
     { id: '7', initials: 'LM', name: 'Lionel Messi', selected: false },
   ]);
   
+  // Handle team data autofill from selected team
+  const handleTeamDataUpdate = (teamData: any) => {
+    if (teamData.formation) {
+      setSelectedFormation(teamData.formation);
+    }
+    
+    if (teamData.players && teamData.players.length > 0) {
+      // Update players with team data, preserving existing players not in team
+      setPlayers(prevPlayers => {
+        const updatedPlayers = [...prevPlayers];
+        
+        // First, reset all selections
+        updatedPlayers.forEach(player => {
+          player.selected = false;
+          player.position = undefined;
+        });
+        
+        // Then apply team players
+        teamData.players.forEach((teamPlayer: any) => {
+          const existingPlayerIndex = updatedPlayers.findIndex(p => p.id === teamPlayer.id);
+          if (existingPlayerIndex !== -1) {
+            // Update existing player
+            updatedPlayers[existingPlayerIndex] = {
+              ...updatedPlayers[existingPlayerIndex],
+              selected: teamPlayer.selected || !!teamPlayer.position,
+              position: teamPlayer.position,
+            };
+          } else {
+            // Add new player from team
+            updatedPlayers.push({
+              id: teamPlayer.id,
+              initials: teamPlayer.initials,
+              name: teamPlayer.name,
+              selected: teamPlayer.selected || !!teamPlayer.position,
+              position: teamPlayer.position,
+            });
+          }
+        });
+        
+        return updatedPlayers;
+      });
+    }
+  };
+  
   // Save draft or close
   const handleClose = () => {
     Alert.alert(
@@ -165,6 +209,7 @@ export default function CreateMatchScreen() {
             customSize={customSize}
             setCustomSize={setCustomSize}
             showTeamSelection={true} // Show team selection buttons in create match
+            onTeamDataUpdate={handleTeamDataUpdate} // Pass callback for autofilling
           />
         );
       case 2:
