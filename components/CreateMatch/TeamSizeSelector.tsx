@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
+import { Users, Shield } from 'lucide-react-native';
 
 interface TeamSizeSelectorProps {
   teamSize: number;
@@ -8,7 +9,6 @@ interface TeamSizeSelectorProps {
   setIsCustomSize: (isCustom: boolean) => void;
   customSize: string;
   setCustomSize: (size: string) => void;
-  showTeamSelection?: boolean; // New prop to control team selection visibility
 }
 
 export default function TeamSizeSelector({
@@ -17,8 +17,7 @@ export default function TeamSizeSelector({
   isCustomSize,
   setIsCustomSize,
   customSize,
-  setCustomSize,
-  showTeamSelection = false // Default to false
+  setCustomSize
 }: TeamSizeSelectorProps) {
   
   const handleSizeSelection = (size: number) => {
@@ -140,45 +139,45 @@ export default function TeamSizeSelector({
         </View>
       )}
 
-      {/* Team Selection Buttons - Only show in Create Match */}
-      {showTeamSelection && (
-        <View style={styles.teamSelectionContainer}>
-          {/* Fast Track Note */}
-          <View style={styles.noteContainer}>
-            <Text style={styles.fastTrackNote}>Fast track</Text>
-          </View>
-          
-          <TouchableOpacity
-            style={styles.teamButton}
-            onPress={handleYourTeamPress}
-            activeOpacity={0.7}
-          >
-            <View style={styles.teamButtonContent}>
-              <Text style={styles.teamButtonText}>Your Team</Text>
-            </View>
-          </TouchableOpacity>
-          
-          {/* VS Text */}
-          <View style={styles.vsContainer}>
-            <Text style={styles.vsText}>vs</Text>
-          </View>
-          
-          <TouchableOpacity
-            style={styles.teamButton}
-            onPress={handleOpposingTeamPress}
-            activeOpacity={0.7}
-          >
-            <View style={styles.teamButtonContent}>
-              <Text style={styles.teamButtonText}>Opposing Team</Text>
-            </View>
-          </TouchableOpacity>
-          
-          {/* Invite Later Note */}
-          <View style={styles.noteContainer}>
-            <Text style={styles.inviteLaterNote}>You can invite later</Text>
-          </View>
+      {/* Team Selection Buttons */}
+      <View style={styles.teamSelectionContainer}>
+        {/* Fast Track Note */}
+        <View style={styles.noteContainer}>
+          <Text style={styles.fastTrackNote}>Fast track</Text>
         </View>
-      )}
+        
+        <TouchableOpacity
+          style={styles.teamButton}
+          onPress={handleYourTeamPress}
+          activeOpacity={0.7}
+        >
+          <View style={styles.teamButtonContent}>
+            <Users size={20} color="#3b82f6" />
+            <Text style={styles.teamButtonText}>Your Team</Text>
+          </View>
+        </TouchableOpacity>
+        
+        {/* VS Text */}
+        <View style={styles.vsContainer}>
+          <Text style={styles.vsText}>vs</Text>
+        </View>
+        
+        <TouchableOpacity
+          style={styles.teamButton}
+          onPress={handleOpposingTeamPress}
+          activeOpacity={0.7}
+        >
+          <View style={styles.teamButtonContent}>
+            <Shield size={20} color="#ef4444" />
+            <Text style={styles.teamButtonText}>Opposing Team</Text>
+          </View>
+        </TouchableOpacity>
+        
+        {/* Invite Later Note */}
+        <View style={styles.noteContainer}>
+          <Text style={styles.inviteLaterNote}>You can invite later</Text>
+        </View>
+      </View>
     </View>
   );
 }

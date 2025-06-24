@@ -164,7 +164,6 @@ export default function CreateMatchScreen() {
             setIsCustomSize={setIsCustomSize}
             customSize={customSize}
             setCustomSize={setCustomSize}
-            showTeamSelection={true} // Show team selection in Create Match
           />
         );
       case 2:
