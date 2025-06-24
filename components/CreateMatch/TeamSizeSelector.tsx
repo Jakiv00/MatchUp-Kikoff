@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
 import { Users, Shield } from 'lucide-react-native';
+import OpposingTeamModal from './OpposingTeamModal';
 
 interface TeamSizeSelectorProps {
   teamSize: number;
@@ -12,6 +13,13 @@ interface TeamSizeSelectorProps {
   showTeamSelection?: boolean; // New prop to control team selection visibility
 }
 
+interface SelectedTeam {
+  id: string;
+  name: string;
+  avatar: string;
+  color: string;
+}
+
 export default function TeamSizeSelector({
   teamSize,
   setTeamSize,
@@ -21,6 +29,9 @@ export default function TeamSizeSelector({
   setCustomSize,
   showTeamSelection = false // Default to false (hidden)
 }: TeamSizeSelectorProps) {
+  
+  const [selectedOpposingTeam, setSelectedOpposingTeam] = useState<SelectedTeam | null>(null);
+  const [opposingTeamModalVisible, setOpposingTeamModalVisible] = useState(false);
   
   const handleSizeSelection = (size: number) => {
     setTeamSize(size);
@@ -58,8 +69,12 @@ export default function TeamSizeSelector({
   };
 
   const handleOpposingTeamPress = () => {
-    // Handle opposing team selection
-    console.log('Opposing team pressed');
+    setOpposingTeamModalVisible(true);
+  };
+
+  const handleOpposingTeamSelect = (team: SelectedTeam) => {
+    setSelectedOpposingTeam(team);
+    setOpposingTeamModalVisible(false);
   };
 
   return (
@@ -166,13 +181,34 @@ export default function TeamSizeSelector({
           </View>
           
           <TouchableOpacity
-            style={styles.teamButton}
+            style={[
+              styles.teamButton,
+              selectedOpposingTeam && styles.selectedTeamButton
+            ]}
             onPress={handleOpposingTeamPress}
             activeOpacity={0.7}
           >
             <View style={styles.teamButtonContent}>
-              <Shield size={20} color="#ef4444" />
-              <Text style={styles.teamButtonText}>Opposing Team</Text>
+              {selectedOpposingTeam ? (
+                <>
+                  <View style={[
+                    styles.selectedTeamAvatar,
+                    { backgroundColor: selectedOpposingTeam.color }
+                  ]}>
+                    <Text style={styles.selectedTeamAvatarText}>
+                      {selectedOpposingTeam.avatar}
+                    </Text>
+                  </View>
+                  <Text style={styles.teamButtonText}>
+                    {selectedOpposingTeam.name}
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Shield size={20} color="#ef4444" />
+                  <Text style={styles.teamButtonText}>Select Opposing Team</Text>
+                </>
+              )}
             </View>
           </TouchableOpacity>
           
@@ -182,6 +218,13 @@ export default function TeamSizeSelector({
           </View>
         </View>
       )}
+
+      {/* Opposing Team Selection Modal */}
+      <OpposingTeamModal
+        visible={opposingTeamModalVisible}
+        onClose={() => setOpposingTeamModalVisible(false)}
+        onSelectTeam={handleOpposingTeamSelect}
+      />
     </View>
   );
 }
@@ -286,6 +329,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#374151',
   },
+  selectedTeamButton: {
+    borderColor: '#3b82f6',
+    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+  },
   teamButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -296,6 +343,18 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  selectedTeamAvatar: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selectedTeamAvatarText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '700',
   },
   vsContainer: {
     alignItems: 'center',
