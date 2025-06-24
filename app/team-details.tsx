@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, CreditCard as Edit, Users, Trophy, Target } from 'lucide-react-native';
+import { router, useLocalSearchParams, useRouter } from 'expo-router';
+import { ArrowLeft, CreditCard as Edit, Users, Trophy, Target, Crown } from 'lucide-react-native';
 import EditTeamModal from '@/components/CreateTeam/EditTeamModal';
 import { getDynamicTeams } from '@/app/(tabs)/teams';
 import { getPublicTeamsData } from '@/app/view-teams';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// Mock team data - in a real app, this would come from your data source
+// Mock team data with team leader information
 const mockTeamData = {
   '1': {
     id: '1',
@@ -19,6 +19,12 @@ const mockTeamData = {
     avatar: 'TB',
     color: '#3b82f6',
     isLeader: true, // User is the leader of this team
+    teamLeader: {
+      id: 'user1',
+      name: 'Alex Rodriguez', // Current user
+      initials: 'AR',
+      isCurrentUser: true,
+    },
     teamSize: 11,
     formation: {
       id: '11-1',
@@ -61,6 +67,12 @@ const mockTeamData = {
     avatar: 'FD',
     color: '#ef4444',
     isLeader: false, // User is NOT the leader of this team
+    teamLeader: {
+      id: 'leader2',
+      name: 'Marcus Thompson', // Different user is the leader
+      initials: 'MT',
+      isCurrentUser: false,
+    },
     teamSize: 7,
     formation: {
       id: '7-1',
@@ -98,6 +110,12 @@ const mockTeamData = {
     avatar: 'SE',
     color: '#10b981',
     isLeader: true, // User is the leader of this team
+    teamLeader: {
+      id: 'user1',
+      name: 'Alex Rodriguez', // Current user
+      initials: 'AR',
+      isCurrentUser: true,
+    },
     teamSize: 11,
     formation: {
       id: '11-2',
@@ -142,6 +160,12 @@ const mockTeamData = {
     avatar: 'LW',
     color: '#f59e0b',
     isLeader: false, // User is NOT the leader of this team
+    teamLeader: {
+      id: 'leader4',
+      name: 'Sarah Chen', // Different user is the leader
+      initials: 'SC',
+      isCurrentUser: false,
+    },
     teamSize: 7,
     formation: {
       id: '7-2',
@@ -180,6 +204,12 @@ const mockTeamData = {
     avatar: 'IP',
     color: '#6366f1',
     isLeader: false, // User is NOT the leader of this team
+    teamLeader: {
+      id: 'leader5',
+      name: 'David Kim', // Different user is the leader
+      initials: 'DK',
+      isCurrentUser: false,
+    },
     teamSize: 11,
     formation: {
       id: '11-1',
@@ -233,14 +263,32 @@ export default function TeamDetailsScreen() {
     const dynamicTeams = getDynamicTeams();
     const dynamicTeam = dynamicTeams.find(team => team.id === teamId);
     if (dynamicTeam) {
-      return dynamicTeam;
+      // Add default team leader info for dynamic teams
+      return {
+        ...dynamicTeam,
+        teamLeader: {
+          id: 'user1',
+          name: 'Alex Rodriguez', // Current user is always leader of created teams
+          initials: 'AR',
+          isCurrentUser: true,
+        }
+      };
     }
     
     // Finally check public teams
     const publicTeams = getPublicTeamsData();
     const publicTeam = publicTeams.find(team => team.id === teamId);
     if (publicTeam) {
-      return publicTeam;
+      // Add default team leader info for public teams (user is not leader)
+      return {
+        ...publicTeam,
+        teamLeader: {
+          id: 'external_leader',
+          name: 'Team Captain', // Generic name for external team leaders
+          initials: 'TC',
+          isCurrentUser: false,
+        }
+      };
     }
     
     return null;
@@ -476,6 +524,29 @@ export default function TeamDetailsScreen() {
             </View>
           </View>
 
+          {/* Team Leader Section - Always visible for teams user participates in */}
+          {teamData.teamLeader && (
+            <View style={styles.teamLeaderSection}>
+              <View style={styles.teamLeaderHeader}>
+                <Crown size={18} color="#f59e0b" />
+                <Text style={styles.teamLeaderTitle}>Team Leader</Text>
+              </View>
+              <View style={styles.teamLeaderInfo}>
+                <View style={styles.teamLeaderAvatar}>
+                  <Text style={styles.teamLeaderInitials}>{teamData.teamLeader.initials}</Text>
+                </View>
+                <View style={styles.teamLeaderDetails}>
+                  <Text style={styles.teamLeaderName}>{teamData.teamLeader.name}</Text>
+                  {teamData.teamLeader.isCurrentUser && (
+                    <View style={styles.youBadge}>
+                      <Text style={styles.youBadgeText}>You</Text>
+                    </View>
+                  )}
+                </View>
+              </View>
+            </View>
+          )}
+
           {/* Team Stats */}
           <View style={styles.statsContainer}>
             <View style={styles.statCard}>
@@ -610,6 +681,65 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   leaderBadgeText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  teamLeaderSection: {
+    backgroundColor: '#0f1115',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#374151',
+  },
+  teamLeaderHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  teamLeaderTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#ffffff',
+    marginLeft: 8,
+  },
+  teamLeaderInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  teamLeaderAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#f59e0b',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  teamLeaderInitials: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  teamLeaderDetails: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  teamLeaderName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#ffffff',
+    marginRight: 8,
+  },
+  youBadge: {
+    backgroundColor: '#10b981',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  youBadgeText: {
     color: '#ffffff',
     fontSize: 12,
     fontWeight: '600',
