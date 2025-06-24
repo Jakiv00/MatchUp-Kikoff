@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Modal, Dimensions } from 'react-native';
-import { MapPin, Heart, Info, X, Check, Parking, Home, Grass } from 'lucide-react-native';
+import { MapPin, Heart, Info, X, Check, ParkingMeter as Parking, Chrome as Home, Grab as Grass } from 'lucide-react-native';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
