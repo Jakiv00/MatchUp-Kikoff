@@ -20,6 +20,8 @@ import Animated, {
 import { X, Save, Users, Plus, ChevronRight } from 'lucide-react-native';
 
 // Import existing components
+import TeamSizeSelector from '@/components/CreateMatch/TeamSizeSelector';
+import TacticsMenu from '@/components/CreateMatch/TacticsMenu';
 import PlayerSelectorModal from '@/components/CreateTeam/PlayerSelectorModal';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -62,6 +64,13 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
 
   // Team configuration state
   const [teamName, setTeamName] = useState('');
+  const [teamSize, setTeamSize] = useState(11);
+  const [isCustomSize, setIsCustomSize] = useState(false);
+  const [customSize, setCustomSize] = useState('');
+  
+  // Tactics state
+  const [isTacticsMenuOpen, setIsTacticsMenuOpen] = useState(true);
+  const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
   
   // Players state
   const [players, setPlayers] = useState<Player[]>([]);
@@ -71,6 +80,10 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
   useEffect(() => {
     if (visible) {
       setTeamName('');
+      setTeamSize(11);
+      setIsCustomSize(false);
+      setCustomSize('');
+      setSelectedFormation(null);
       setPlayers([]);
       
       // Animate in
@@ -103,14 +116,14 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
     // Create comprehensive team data structure matching mock teams
     const teamData = {
       name: teamName,
-      teamSize: 11, // Default team size for teams
+      teamSize: teamSize,
       wins: 0, // Initialize with 0 wins
       losses: 0, // Initialize with 0 losses
       members: players.length,
       avatar: teamName.split(' ').map((word: string) => word[0]).join('').toUpperCase().slice(0, 2),
       color: '#8b5cf6', // Default purple color for new teams
       isLeader: true, // User is always the leader of teams they create
-      formation: null, // No formation set initially
+      formation: selectedFormation,
       players: players,
     };
 
@@ -119,7 +132,7 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
   };
 
   const canCreate = () => {
-    return teamName.trim().length > 0 && players.length > 0;
+    return teamName.trim().length > 0 && players.length >= teamSize;
   };
 
   const handlePlayersUpdate = (updatedPlayers: Player[]) => {
@@ -231,6 +244,37 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
                     ))}
                   </ScrollView>
                 )}
+              </View>
+
+              {/* Team Size Selector */}
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Team Size</Text>
+                <View style={styles.componentWrapper}>
+                  <TeamSizeSelector
+                    teamSize={teamSize}
+                    setTeamSize={setTeamSize}
+                    isCustomSize={isCustomSize}
+                    setIsCustomSize={setIsCustomSize}
+                    customSize={customSize}
+                    setCustomSize={setCustomSize}
+                  />
+                </View>
+              </View>
+
+              {/* Tactics Formation */}
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Formation & Tactics</Text>
+                <View style={styles.componentWrapper}>
+                  <TacticsMenu
+                    teamSize={teamSize}
+                    isOpen={isTacticsMenuOpen}
+                    setIsOpen={setIsTacticsMenuOpen}
+                    selectedFormation={selectedFormation}
+                    setSelectedFormation={setSelectedFormation}
+                    players={players}
+                    setPlayers={setPlayers}
+                  />
+                </View>
               </View>
             </ScrollView>
 
@@ -396,6 +440,11 @@ const styles = StyleSheet.create({
     color: '#9ca3af',
     fontSize: 12,
     textAlign: 'center',
+  },
+  componentWrapper: {
+    backgroundColor: '#0f1115',
+    borderRadius: 12,
+    overflow: 'hidden',
   },
   footer: {
     flexDirection: 'row',
