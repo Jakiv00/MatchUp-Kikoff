@@ -4,6 +4,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, CreditCard as Edit, Users, Trophy, Target } from 'lucide-react-native';
 import EditTeamModal from '@/components/CreateTeam/EditTeamModal';
 import { getDynamicTeams } from '@/app/(tabs)/teams';
+import { getPublicTeamsData } from '@/app/view-teams';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -220,7 +221,7 @@ export default function TeamDetailsScreen() {
   const teamId = params.id as string;
   const [editModalVisible, setEditModalVisible] = useState(false);
   
-  // Get team data from either mock data or dynamic data
+  // Get team data from mock data, dynamic data, or public teams data
   const [teamData, setTeamData] = useState(() => {
     // First check mock data
     const mockTeam = mockTeamData[teamId as keyof typeof mockTeamData];
@@ -233,6 +234,13 @@ export default function TeamDetailsScreen() {
     const dynamicTeam = dynamicTeams.find(team => team.id === teamId);
     if (dynamicTeam) {
       return dynamicTeam;
+    }
+    
+    // Finally check public teams
+    const publicTeams = getPublicTeamsData();
+    const publicTeam = publicTeams.find(team => team.id === teamId);
+    if (publicTeam) {
+      return publicTeam;
     }
     
     return null;

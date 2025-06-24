@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
-import { Plus } from 'lucide-react-native';
+import { Plus, Eye } from 'lucide-react-native';
 import { router } from 'expo-router';
 import CreateTeamModal from '@/components/CreateTeam/CreateTeamModal';
 
@@ -67,6 +67,10 @@ export default function TeamsScreen() {
 
   const handleCreateTeam = () => {
     setCreateTeamModalVisible(true);
+  };
+
+  const handleViewTeams = () => {
+    router.push('/view-teams');
   };
 
   const handleTeamCreated = (teamData: any) => {
@@ -162,15 +166,26 @@ export default function TeamsScreen() {
       {/* Header */}
       <Text style={styles.title}>Teams</Text>
       
-      {/* Create Team Button */}
-      <TouchableOpacity
-        style={styles.createButton}
-        onPress={handleCreateTeam}
-        activeOpacity={0.8}
-      >
-        <Plus size={20} color="#ffffff" />
-        <Text style={styles.createButtonText}>Create a team</Text>
-      </TouchableOpacity>
+      {/* Action Buttons */}
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity
+          style={styles.createButton}
+          onPress={handleCreateTeam}
+          activeOpacity={0.8}
+        >
+          <Plus size={20} color="#ffffff" />
+          <Text style={styles.createButtonText}>Create a team</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.viewButton}
+          onPress={handleViewTeams}
+          activeOpacity={0.8}
+        >
+          <Eye size={20} color="#ffffff" />
+          <Text style={styles.viewButtonText}>View Teams</Text>
+        </TouchableOpacity>
+      </View>
       
       {/* Teams List */}
       <ScrollView
@@ -208,6 +223,12 @@ const styles = StyleSheet.create({
     marginTop: 50,
     marginBottom: 24,
   },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 24,
+    gap: 12,
+  },
   createButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -215,8 +236,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 12,
-    marginBottom: 24,
-    alignSelf: 'flex-start',
+    flex: 1,
+    justifyContent: 'center',
     shadowColor: '#8b5cf6',
     shadowOffset: {
       width: 0,
@@ -227,6 +248,30 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   createButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  viewButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#3b82f6',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    flex: 1,
+    justifyContent: 'center',
+    shadowColor: '#3b82f6',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  viewButtonText: {
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',
