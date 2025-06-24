@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
+import { Users, Shield } from 'lucide-react-native';
 
 interface TeamSizeSelectorProps {
   teamSize: number;
@@ -47,6 +48,16 @@ export default function TeamSizeSelector({
   const handleCustomPress = () => {
     setIsCustomSize(true);
     setCustomSize(teamSize.toString());
+  };
+
+  const handleYourTeamPress = () => {
+    // Handle your team selection
+    console.log('Your team pressed');
+  };
+
+  const handleOpposingTeamPress = () => {
+    // Handle opposing team selection
+    console.log('Opposing team pressed');
   };
 
   return (
@@ -127,6 +138,46 @@ export default function TeamSizeSelector({
           <Text style={styles.formatText}>{customSize}v{customSize}</Text>
         </View>
       )}
+
+      {/* Team Selection Buttons */}
+      <View style={styles.teamSelectionContainer}>
+        {/* Fast Track Note */}
+        <View style={styles.noteContainer}>
+          <Text style={styles.fastTrackNote}>Fast track</Text>
+        </View>
+        
+        <TouchableOpacity
+          style={styles.teamButton}
+          onPress={handleYourTeamPress}
+          activeOpacity={0.7}
+        >
+          <View style={styles.teamButtonContent}>
+            <Users size={20} color="#3b82f6" />
+            <Text style={styles.teamButtonText}>Your Team</Text>
+          </View>
+        </TouchableOpacity>
+        
+        {/* VS Text */}
+        <View style={styles.vsContainer}>
+          <Text style={styles.vsText}>vs</Text>
+        </View>
+        
+        <TouchableOpacity
+          style={styles.teamButton}
+          onPress={handleOpposingTeamPress}
+          activeOpacity={0.7}
+        >
+          <View style={styles.teamButtonContent}>
+            <Shield size={20} color="#ef4444" />
+            <Text style={styles.teamButtonText}>Opposing Team</Text>
+          </View>
+        </TouchableOpacity>
+        
+        {/* Invite Later Note */}
+        <View style={styles.noteContainer}>
+          <Text style={styles.inviteLaterNote}>You can invite later</Text>
+        </View>
+      </View>
     </View>
   );
 }
@@ -202,5 +253,56 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#3b82f6',
     fontWeight: '600',
+  },
+  teamSelectionContainer: {
+    marginTop: 24,
+    gap: 12,
+  },
+  noteContainer: {
+    alignItems: 'center',
+    paddingVertical: 4,
+  },
+  fastTrackNote: {
+    color: '#10b981',
+    fontSize: 14,
+    fontWeight: '600',
+    fontStyle: 'italic',
+  },
+  inviteLaterNote: {
+    color: '#9ca3af',
+    fontSize: 14,
+    fontWeight: '500',
+    fontStyle: 'italic',
+  },
+  teamButton: {
+    backgroundColor: '#1a1d23',
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderWidth: 1,
+    borderColor: '#374151',
+  },
+  teamButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+  },
+  teamButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  vsContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+  },
+  vsText: {
+    color: '#9ca3af',
+    fontSize: 18,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 2,
   },
 });
