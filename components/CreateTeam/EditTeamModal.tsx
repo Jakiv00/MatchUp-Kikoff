@@ -258,6 +258,7 @@ export default function EditTeamModal({ visible, onClose, onUpdateTeam, teamData
                     setIsCustomSize={setIsCustomSize}
                     customSize={customSize}
                     setCustomSize={setCustomSize}
+                    showTeamSelection={false} // Hide team selection buttons in edit team
                   />
                 </View>
               </View>

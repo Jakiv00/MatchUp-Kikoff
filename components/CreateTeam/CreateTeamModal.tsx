@@ -257,6 +257,7 @@ export default function CreateTeamModal({ visible, onClose, onCreateTeam }: Crea
                     setIsCustomSize={setIsCustomSize}
                     customSize={customSize}
                     setCustomSize={setCustomSize}
+                    showTeamSelection={false} // Hide team selection buttons in create team
                   />
                 </View>
               </View>
