@@ -72,39 +72,6 @@ const mockMessages: Record<string, Message[]> = {
       timestamp: '10:36 AM',
       isOwn: false,
     },
-    {
-      id: '6',
-      text: 'Looking forward to it! Should be a great game.',
-      timestamp: '10:37 AM',
-      isOwn: true,
-      read: true,
-    },
-    {
-      id: '7',
-      text: 'Did you see the weather forecast? Looks like it might rain.',
-      timestamp: '10:40 AM',
-      isOwn: false,
-    },
-    {
-      id: '8',
-      text: 'Yeah, I saw that. We should bring extra gear just in case.',
-      timestamp: '10:42 AM',
-      isOwn: true,
-      read: true,
-    },
-    {
-      id: '9',
-      text: 'Good thinking! I\'ll pack my rain jacket.',
-      timestamp: '10:43 AM',
-      isOwn: false,
-    },
-    {
-      id: '10',
-      text: 'Perfect! Rain or shine, we\'re going to have an amazing match!',
-      timestamp: '10:45 AM',
-      isOwn: true,
-      read: true,
-    },
   ],
   '2': [
     {
@@ -133,30 +100,21 @@ const playerNames: Record<string, string> = {
 
 const BOTTOM_MENU_HEIGHT = 49; // Height of the bottom menu bar
 
-// Platform-specific keyboard heights
-const KEYBOARD_HEIGHT = Platform.OS === 'ios' ? 248 : 218;
-const INPUT_BAR_HEIGHT = 64;
-const SCROLL_ANIMATION_DURATION = Platform.OS === 'ios' ? 250 : 300;
-
 export default function ChatConversation({ chatId, onBack }: ChatConversationProps) {
   const [messages, setMessages] = useState<Message[]>(mockMessages[chatId] || []);
   const [inputText, setInputText] = useState('');
-  const [contentHeight, setContentHeight] = useState(0);
-  const [scrollViewHeight, setScrollViewHeight] = useState(0);
-  const [isInputFocused, setIsInputFocused] = useState(false);
-  
   const scrollViewRef = useRef<ScrollView>(null);
   const translateX = useSharedValue(0);
+  const inputTranslateY = useSharedValue(0);
+  const spacerHeight = useSharedValue(0);
 
   const playerName = playerNames[chatId] || 'Player';
 
   useEffect(() => {
-    // Scroll to bottom when messages change (but not when keyboard appears)
-    if (!isInputFocused) {
-      setTimeout(() => {
-        scrollViewRef.current?.scrollToEnd({ animated: true });
-      }, 100);
-    }
+    // Scroll to bottom when messages change
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 100);
   }, [messages]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -198,44 +156,39 @@ export default function ChatConversation({ chatId, onBack }: ChatConversationPro
   };
 
   const handleInputFocus = () => {
-    setIsInputFocused(true);
+    const offset = Platform.OS === 'ios' ? 235 : 205;
+    const adjustedOffset = offset - 90;
+    inputTranslateY.value = withTiming(-adjustedOffset, { 
+      duration: Platform.OS === 'ios' ? 250 : 300 
+    });
     
-    // Check if content is scrollable (more content than visible area)
-    const isScrollable = contentHeight > scrollViewHeight;
-    
-    if (isScrollable) {
-      // Calculate scroll offset to keep last visible message above input
-      const scrollOffset = KEYBOARD_HEIGHT + INPUT_BAR_HEIGHT;
-      
-      // Scroll with WhatsApp-like timing
-      setTimeout(() => {
-        scrollViewRef.current?.scrollToEnd({ 
-          animated: true 
-        });
-        
-        // Add additional offset to account for keyboard
-        setTimeout(() => {
-          scrollViewRef.current?.scrollTo({
-            y: contentHeight - scrollViewHeight + scrollOffset,
-            animated: true
-          });
-        }, 50);
-      }, 50);
-    }
+    // Calculate and animate spacer height
+    const keyboardVerticalOffset = Platform.OS === 'ios' ? 90 : 0;
+    const newSpacerHeight = adjustedOffset - keyboardVerticalOffset - BOTTOM_MENU_HEIGHT;
+    spacerHeight.value = withTiming(newSpacerHeight, { 
+      duration: Platform.OS === 'ios' ? 250 : 300 
+    });
   };
 
   const handleInputBlur = () => {
-    setIsInputFocused(false);
-    // Don't scroll back - preserve position like WhatsApp
+    inputTranslateY.value = withTiming(0, { 
+      duration: Platform.OS === 'ios' ? 250 : 300 
+    });
+    spacerHeight.value = withTiming(0, { 
+      duration: Platform.OS === 'ios' ? 250 : 300 
+    });
   };
 
-  const handleContentSizeChange = (contentWidth: number, contentHeight: number) => {
-    setContentHeight(contentHeight);
-  };
+  const inputAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: inputTranslateY.value }],
+  }));
 
-  const handleScrollViewLayout = (event: any) => {
-    setScrollViewHeight(event.nativeEvent.layout.height);
-  };
+  const spacerAnimatedStyle = useAnimatedStyle(() => ({
+    height: spacerHeight.value,
+  }));
+
+  const chatAnimatedStyle = useAnimatedStyle(() => ({
+  }));
 
   return (
     <PanGestureHandler onGestureEvent={gestureHandler}>
@@ -256,27 +209,25 @@ export default function ChatConversation({ chatId, onBack }: ChatConversationPro
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         >
-          <View style={styles.chatContainer}>
-            <ScrollView
-              ref={scrollViewRef}
-              style={styles.messagesContainer}
-              contentContainerStyle={styles.messagesContent}
-              showsVerticalScrollIndicator={false}
+          <Animated.View style={[styles.chatContainer, chatAnimatedStyle]}>
+          <ScrollView
+            ref={scrollViewRef}
+            style={styles.messagesContainer}
+            contentContainerStyle={styles.messagesContent}
+            showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps="handled"
               keyboardDismissMode="on-drag"
               bounces={true}
               overScrollMode="always"
               onScrollBeginDrag={Keyboard.dismiss}
-              onContentSizeChange={handleContentSizeChange}
-              onLayout={handleScrollViewLayout}
-            >
-              {messages.map((message) => (
-                <MessageBubble key={message.id} message={message} />
-              ))}
-            </ScrollView>
-          </View>
+          >
+            {messages.map((message) => (
+              <MessageBubble key={message.id} message={message} />
+            ))}
+          </ScrollView>
+          </Animated.View>
 
-          <View style={styles.inputContainer}>
+          <Animated.View style={[styles.inputContainer, inputAnimatedStyle]}>
             <TextInput
               style={styles.textInput}
               value={inputText}
@@ -298,7 +249,9 @@ export default function ChatConversation({ chatId, onBack }: ChatConversationPro
             >
               <Send size={20} color="#ffffff" />
             </TouchableOpacity>
-          </View>
+          </Animated.View>
+          
+          <Animated.View style={[styles.spacer, spacerAnimatedStyle]} />
         </KeyboardAvoidingView>
       </Animated.View>
     </PanGestureHandler>
@@ -365,7 +318,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#1a1d23',
     backgroundColor: '#0f1115',
-    minHeight: INPUT_BAR_HEIGHT,
+    position: 'relative',
+    minHeight: 64,
     maxHeight: 120,
   },
   textInput: {
@@ -392,5 +346,12 @@ const styles = StyleSheet.create({
   },
   sendButtonInactive: {
     backgroundColor: '#374151',
+  },
+  spacer: {
+    position: 'absolute',
+    bottom: BOTTOM_MENU_HEIGHT,
+    left: 0,
+    right: 0,
+    backgroundColor: '#0f1115',
   },
 });
